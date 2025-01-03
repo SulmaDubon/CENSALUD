@@ -1,0 +1,346 @@
+---
+title: "Desarrollo del trabajo: Implementacion"
+subtitle: "Desarrollo de una plataforma bioinformática para el monitoreo del virus del Dengue"
+author: "Sulma Dubon Olmedo"
+date: "Diciembre, 2024"
+format:
+  html:
+    code-fold: true      
+    toc: true            
+    number-sections: true
+    echo: true
+    diagram: true 
+  pdf:
+    toc: true
+    number_sections: false
+    pdf_engine: pdflatex
+    documentclass: article
+lang: es-ES
+fontsize: "12pt"
+fontfamily: "kpfonts" 
+geometry: 
+  - left=3.0cm
+  - right=3.0cm
+  - top=2.0cm
+  - bottom=2.5cm
+urlcolor: blue
+execute: 
+  echo: true
+  warning: false
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+
+
+# Introducción
+
+Este documento describe el desarrollo de una plataforma bioinformática para el monitoreo del virus del dengue, utilizando herramientas como R y Shiny. Cada sección detalla aspectos específicos del análisis y la implementación, destacando los objetivos, procesos y resultados clave.
+
+# Análisis de Base de Datos
+
+**Objetivo:** Mejorar la estructura de la base de datos proporcionada por CENSALUD para hacerla adecuada para análisis epidemiológicos en R.
+
+## Pasos para mejorar la estructura de la tabla
+
+1. **Unificación de datos:**
+   
+   La información del estudio está separada en diferentes tablas de Excel por municipio. Estas se unificaron en una estructura tabular, incorporando una columna con el nombre del municipio.
+
+2. **Eliminación de información irrelevante:**
+   
+   Variables como "Entrevistador", "Dirección", "Nombre del jefe de familia", "Edad" y "Número de teléfono" se eliminaron por no ser relevantes para el análisis.
+
+3. **Estandarización y simplificación de variables:**
+   
+   Las preguntas largas se reemplazaron por nombres de variables concisos y descriptivos. Algunas variables se modificaron en tipo y valores. En el apéndice [Apéndice B](#appendix-b) se muestra la tabla con sus variables y valores.
+
+### Resultados
+
+Con estos pasos, se logró:
+
+1. **Optimización de la base de datos para el análisis epidemiológico:**
+   
+   La unificación y eliminación de redundancias transformó una base de datos compleja en una estructura más manejable, facilitando la identificación de patrones y tendencias.
+
+2. **Reducción de la complejidad en la organización de variables:**
+   
+   La estandarización mejora la legibilidad y reduce errores.
+
+3. **Eliminación de información irrelevante como práctica ética y técnica:**
+   
+   Protege la privacidad de los participantes y reduce el ruido innecesario.
+
+4. **Homogeneización de las tablas por departamentos y municipios:**
+   
+   Simplifica el análisis multivariable y permite comparaciones regionales claras.
+
+5. **Contribución al estudio epidemiológico del dengue:**
+   
+   Los datos organizados permiten identificar factores de riesgo y diseñar estrategias de intervención precisas.
+
+6. **Facilitación del uso de herramientas de análisis en R:**
+   
+   Incrementa el potencial del estudio para generar hallazgos útiles.
+
+7. **Impacto en la toma de decisiones para la salud pública:**
+   
+   Mejora la calidad del análisis y proporciona un modelo replicable para otros estudios.
+
+---
+
+# Descripción del Sistema
+
+**Objetivo:** Implementar una aplicación Shiny que permita el análisis y visualización de datos epidemiológicos de manera interactiva y modular.
+
+El sistema es una **aplicación Shiny** estructurada en módulos. Cada módulo gestiona una función específica, desde la carga y preprocesamiento de datos hasta el análisis estadístico y la visualización geoespacial. La información fluye entre los módulos mediante **variables reactivas**.
+
+## Bloques principales
+
+1. **Instalación y carga de librerías:**
+   
+   Gestionado por `instalar_cargar_librerias()`.
+   
+   Librerías utilizadas: `shiny`, `dplyr`, `ggplot2`, `plotly`, `leaflet`, entre otras.
+
+2. **Definición de categorías:**
+   
+   Conjunto de variables categóricas agrupadas según dimensiones específicas (e.g., Conocimiento, Prácticas, Familia).
+
+3. **Importación de módulos:**
+   
+   - `carga_datos.R`
+   - `visualizacion_geoespacial.R`
+   - `analisis_descriptivo.R`
+   - `inferencia_estadistica.R`
+   - `regresion_modelos.R`
+   - `analisis_multivariante.R`
+
+4. **Interfaz de usuario (UI):**
+   
+   Diseñada con `navbarPage`. Cada pestaña corresponde a un módulo específico.
+
+5. **Lógica del servidor (Server):**
+   
+   Gestiona la interacción entre datos y UI mediante `callModule()`.
+
+6. **Flujo de datos:**
+   
+   - Los datos se cargan en el módulo **Carga de Datos**.
+   - Los datos procesados fluyen hacia los módulos de visualización y análisis.
+
+7. **Ejecución de la aplicación:**
+   
+   Uso de `shinyApp()` para inicializar la aplicación completa.
+
+```{mermaid}
+flowchart TD
+    K[Archivo] --> A
+    A[Carga de Datos]
+    A --> C[Visualización Geoespacial]
+    A --> D[Análisis Descriptivo]
+    A --> E[Inferencia Estadística]
+    A --> F[Regresión y Modelos]
+    A --> G[Análisis Multivariante]
+    C --> H[Visualización de Variables Dependientes]
+    C --> I[Visualización de Especies]
+    C --> J[Gráficos de Dispersión]
+    D --> L[Tablas de Resumen, Gráficos]
+```
+
+---
+
+# Módulo: Carga de Datos
+
+**Objetivo:** Permitir la carga, validación y normalización de los datos en diferentes formatos (CSV o Excel).
+
+## Diagrama de Flujo
+
+```{mermaid}
+flowchart TD
+    A[Inicio: Usuario selecciona un archivo de datos] --> B{¿El archivo es válido?}
+    B -->|No| C[Mostrar mensaje de error al usuario]
+    B -->|Sí| D[Leer archivo CSV o Excel en R]
+    D --> E[Normalizar datos]
+    E --> F[Validar categorías: convertir tipos, completar valores faltantes]
+    F --> G[Actualizar variable reactiva: datos_completos]
+    G --> H[Mostrar vista previa en la UI]
+    H --> I[Crear informe: Crear carpeta y notificar en UI]
+    H --> J[Eliminar informe: Borrar carpeta existente y actualizar estado en UI]
+    G --> K[Datos procesados y listos para otros módulos]
+```
+
+## Diagrama UML
+
+```{mermaid}
+classDiagram
+    class cargaDatosUI {
+        - id: string
+        + fileInput()
+        + actionButton()
+        + textOutput()
+        + tableOutput()
+    }
+
+    class cargaDatos {
+        - input: reactiveInput
+        - output: reactiveOutput
+        - session: reactiveSession
+        - datos_completos: reactive
+        - carpeta_informe: reactive
+        + crearInforme()
+        + eliminarInforme()
+        + cargarArchivo()
+        + normalizarDatos()
+    }
+
+    class FuncionesAuxiliares {
+        + crearCarpetaUnica()
+        + eliminarCarpeta()
+        + normalizarDatos()
+    }
+
+    cargaDatosUI --> cargaDatos
+    cargaDatos --> FuncionesAuxiliares
+```
+
+---
+
+# Módulo: Visualización Geoespacial
+
+**Objetivo:** Generar mapas interactivos que permitan explorar los datos geoespaciales de forma visual y dinámica.
+
+## Diagrama de flujo
+
+```{mermaid}
+ flowchart TD
+    A[Inicio: Datos completos recibidos desde datos_completos previamente procesados] --> B[Llamar a la función auxiliar crear_datos_relevantes]
+    B --> C[Generar datos relevantes y almacenar en la variable reactiva datos_relevantes]
+    C --> D[Submódulo: Análisis Geoespacial]
+    C --> E[Submódulo: Análisis de Especies]
+    C --> F[Submódulo: Gráficos de Dispersión]
+```
+
+## Diagrama UML
+```{mermaid}
+ classDiagram
+    class visualizacionGeoespacialUI {
+        +navlistPanel
+        +tabPanel
+    }
+
+    class visualizacionGeoespacial {
+        -datos_completos: reactive
+        -datos_relevantes: reactive
+        -carpeta_informe: reactive
+        +callModule
+        +crear_datos_relevantes
+    }
+
+    class analisisGeo {
+    }
+
+    class analisisEsp {
+    }
+
+    class graficosGeo {
+    }
+
+    class crear_datos_relevantes {
+        -Validar columnas
+        -Limpiar coordenadas
+        -Corregir longitudes
+        -Seleccionar columnas
+        -Agregar columna fam_entrev
+    }
+
+    visualizacionGeoespacialUI --> visualizacionGeoespacial
+    visualizacionGeoespacial --> analisisGeo
+    visualizacionGeoespacial --> analisisEsp
+    visualizacionGeoespacial --> graficosGeo
+    visualizacionGeoespacial --> crear_datos_relevantes
+```
+
+
+## Submódulos
+
+### Análisis Geoespacial
+
+**Objetivo:** Permitir la visualización de patrones geoespaciales relevantes mediante mapas interactivos.
+
+#### Diagrama de Flujo
+
+```{mermaid}
+flowchart TD
+    A[Inicio: Datos relevantes recibidos desde datos_completos] --> B[Generar subconjunto de datos relevantes]
+    B --> C[Crear mapa interactivo con Leaflet]
+    C --> D[Mostrar mapa en la interfaz de usuario]
+    D --> E[Exportar mapa a formatos HTML y PNG]
+```
+
+#### Diagrama UML
+
+```{mermaid}
+classDiagram
+    class analisisGeo {
+        - datos: reactive
+        + generarMapa(): leafletMap
+        + exportarMapaHTML(): void
+        + exportarMapaPNG(): void
+    }
+
+    analisisGeo --> FuncionesAuxiliares
+```
+
+### Análisis de Especies
+
+**Objetivo:** Visualizar distribuciones específicas por especies en los datos geoespaciales.
+
+#### Diagrama de Flujo
+
+```{mermaid}
+flowchart TD
+    A[Inicio: Datos relevantes recibidos] --> B[Filtrar por especie seleccionada]
+    B --> C[Generar mapa con marcadores específicos]
+    C --> D[Exportar mapa a formatos interactivos]
+```
+
+#### Diagrama UML
+
+```{mermaid}
+classDiagram
+    class analisisEsp {
+        - datos: reactive
+        + filtrarEspecie(): dataFrame
+        + generarMapaEspecie(): leafletMap
+        + exportarMapa(): void
+    }
+
+    analisisEsp --> FuncionesAuxiliares
+```
+
+---
+
+# Requisitos del Sistema
+
+**Objetivo:** Asegurar la correcta implementación y ejecución del sistema en el entorno de trabajo.
+
+## Requisitos
+
+- **Sistema Operativo:** Windows, macOS o Linux.
+- **Lenguaje:** R (versión 4.1 o superior).
+- **Paquetes de R:**
+  - `shiny`
+  - `dplyr`
+  - `ggplot2`
+  - `leaflet`
+  - `FactoMineR`, entre otros.
+
+## Futuras Mejoras
+
+- Soporte para más formatos de archivo (e.g., JSON, SQL).
+- Incluir técnicas avanzadas de análisis multivariante.
+- Optimizar el rendimiento para grandes volúmenes de datos.
+
+
