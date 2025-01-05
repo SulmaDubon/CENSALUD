@@ -14,12 +14,14 @@ instalar_cargar_librerias <- function(librerias) {
 librerias_necesarias <- c(
   "htmlwidgets", "shiny", "dplyr", "ggplot2", "plotly", 
   "fs", "tidyr", "FactoMineR", "DescTools", "readxl", 
-  "leaflet"
+  "leaflet", "purrr", "flextable", "writexl", "kableExtra",
+  "knitr", "rmarkdown", "broom", "webshot", "tools", 
+  "renv", "tidyverse"
 )
-
-install.packages("purrr")
-library(tidyverse)
 
 
 # Instalar y cargar las librerías
 instalar_cargar_librerias(librerias_necesarias)
+
+install.packages("terra")
+

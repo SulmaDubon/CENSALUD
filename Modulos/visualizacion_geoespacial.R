@@ -1,12 +1,12 @@
 # Cargar funciones geoespaciales
-source("modulos/Funciones/funciones_geoespaciales.R")
-source("modulos/Funciones/funciones_cargadatos.R")
+source("Modulos/Funciones/funciones_geoespaciales.R")
+source("Modulos/Funciones/funciones_cargadatos.R")
 
 # Cargar submódulos
-source("modulos/Funciones/funciones_geoespaciales.R")
-source("modulos/analisis_geoespacial.R")
-source("modulos/analisis_especies.R")
-source("modulos/graficos_geo.R")
+source("Modulos/Funciones/funciones_geoespaciales.R")
+source("Modulos/analisis_geoespacial.R")
+source("Modulos/analisis_especies.R")
+source("Modulos/graficos_geo.R")
 
 # UI para Visualización Geoespacial
 visualizacionGeoespacialUI <- function(id) {

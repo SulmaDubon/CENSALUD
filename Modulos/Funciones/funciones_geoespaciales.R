@@ -89,8 +89,61 @@ generar_nombre_unico <- function(variable_leyenda, municipios) {
 }
 
 
+#------------------------------------------------
+# Funcion leyendas personalizadas mapas especies
 #-------------------------------------------------
-# Función para generar mapas de especies
+addLegendCustom <- function(map, variables_seleccionadas) {
+  # Generar contenido de la leyenda basado en las variables seleccionadas
+  legend_html <- paste0(
+    "<div style='background-color: white; padding: 5px; border-radius: 5px; font-size: 12px;'>",
+    "<strong>Leyenda</strong><br>",
+    paste(
+      lapply(variables_seleccionadas, function(variable) {
+        if (grepl("H_", variable)) {
+          # Hembras: círculo con borde amarillo
+          paste0(
+            "<div style='display: flex; align-items: center; margin-bottom: 5px;'>",
+            "<div style='width: 15px; height: 15px; background-color: ",
+            ifelse(variable == "H_Aeg", "red", "green"),
+            "; border: 2px solid yellow; border-radius: 50%; margin-right: 5px;'></div>",
+            variable,
+            "</div>"
+          )
+        } else {
+          # Machos: triángulos
+          color <- ifelse(variable == "M_Aeg", "red", "green")
+          paste0(
+            "<div style='display: flex; align-items: center; margin-bottom: 5px;'>",
+            "<div style='width: 0; height: 0; border-left: 7px solid transparent; ",
+            "border-right: 7px solid transparent; border-bottom: 14px solid ", color, "; ",
+            "margin-right: 5px;'></div>",
+            variable,
+            "</div>"
+          )
+        }
+      }) %>% unlist() %>% paste(collapse = ""),
+      "</div>"
+    )
+  )
+  addControl(map, html = legend_html, position = "bottomright")
+}
+
+#-------------------------------------------------------
+# Funcion para añadir leyenda municipio a mapas especie
+#-------------------------------------------------------
+addMunicipiosLegend <- function(map, municipios_seleccionados) {
+  # Generar contenido de la leyenda para los municipios seleccionados
+  legend_html <- paste0(
+    "<div style='background-color: white; padding: 5px; border-radius: 5px; font-size: 12px;'>",
+    "<strong>Municipios Seleccionados:</strong><br>",
+    paste(municipios_seleccionados, collapse = "<br>"),
+    "</div>"
+  )
+  addControl(map, html = legend_html, position = "bottomleft")
+}
+
+#-------------------------------------------------
+# Funcion para generar mapas para especie
 #-------------------------------------------------
 generar_mapa_especies <- function(datos, variables_especies, municipios_seleccionados, variables_leyendas, crear_icono) {
   mapa <- leaflet() %>% addTiles()
@@ -105,12 +158,13 @@ generar_mapa_especies <- function(datos, variables_especies, municipios_seleccio
     }
     
     if (grepl("H_", variable)) {
+      # Hembras
       mapa <- mapa %>%
         addCircleMarkers(
           lng = datos_variable$Coor_Long,
           lat = datos_variable$Coor_Lat,
           color = "yellow",
-          fillColor = if_else(variable == "H_Aeg", "red", "green"),
+          fillColor = ifelse(variable == "H_Aeg", "red", "green"),
           fillOpacity = 0.6,
           radius = 8,
           stroke = TRUE,
@@ -122,6 +176,7 @@ generar_mapa_especies <- function(datos, variables_especies, municipios_seleccio
           )
         )
     } else {
+      # Machos
       icono <- crear_icono(variable)
       mapa <- mapa %>%
         addMarkers(
@@ -137,9 +192,10 @@ generar_mapa_especies <- function(datos, variables_especies, municipios_seleccio
     }
   }
   
-  mapa %>%
-    addLegendCustom(variables_especies) %>%
-    addMunicipiosLegend(municipios_seleccionados)
+  # Agregar leyendas
+  mapa <- addLegendCustom(mapa, variables_especies)
+  mapa <- addMunicipiosLegend(mapa, municipios_seleccionados)
+  
+  return(mapa)
 }
-
 

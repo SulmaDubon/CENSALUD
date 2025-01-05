@@ -138,7 +138,6 @@ analisisDescriptivo <- function(input, output, session, datos_completos, carpeta
   
   
  # Generar Grafico
-  
   output$grafico_resumen <- renderPlot({
     datos <- datos_filtrados()
     req(datos)
@@ -147,10 +146,26 @@ analisisDescriptivo <- function(input, output, session, datos_completos, carpeta
     
     tipo_grafico <- input$tipo_grafico  # Selector del tipo de gráfico
     
+    # Función para traducir valores usando el diccionario
+    traducir_respuestas <- function(variable, respuesta) {
+      if (!is.null(diccionario_respuestas[[variable]])) {
+        nombres <- names(diccionario_respuestas[[variable]])
+        valores <- diccionario_respuestas[[variable]]
+        return(nombres[match(respuesta, valores)])
+      }
+      return(as.character(respuesta))  # Si no hay traducción, retornar el valor original
+    }
+    
+    # Aplicar la traducción a las respuestas
+    datos <- datos %>%
+      mutate(
+        Respuesta_Traducida = mapply(traducir_respuestas, Variable, Respuesta)
+      )
+    
     if (tipo_grafico == "Barras Apiladas") {
       # Lógica para barras apiladas
       datos_grafico_apilado <- datos %>%
-        group_by(Variable, Respuesta, Municipio) %>%
+        group_by(Variable, Respuesta_Traducida, Municipio) %>%
         summarise(Conteo = n(), .groups = "drop") %>%
         group_by(Variable, Municipio) %>%
         mutate(
@@ -158,19 +173,17 @@ analisisDescriptivo <- function(input, output, session, datos_completos, carpeta
         ) %>%
         ungroup() %>%
         mutate(
-          Variable_Descriptiva = sapply(Variable, function(x) dic_titulo_graf[[x]] %||% x),
-          Etiqueta = as.character(Respuesta)
-        )  # Sin procesamiento adicional de etiquetas
+          Variable_Descriptiva = sapply(Variable, function(x) dic_titulo_graf[[x]] %||% x)
+        )
       
-      # Crear el gráfico de barras apiladas
-      ggplot(datos_grafico_apilado, aes(x = Municipio, y = Conteo, fill = Etiqueta)) +
+      ggplot(datos_grafico_apilado, aes(x = Municipio, y = Conteo, fill = Respuesta_Traducida)) +
         geom_bar(stat = "identity", position = "stack") +
         geom_text(
           aes(label = paste0(Porcentaje_Local, "%")),  # Mostrar porcentaje local
-          position = position_stack(vjust = 0.5)
+          position = position_stack(vjust = 0.5)  # Centrado en la barra
         ) +
         scale_y_continuous(expand = c(0, 0)) +
-        facet_wrap(~ Variable_Descriptiva, scales = "fixed") +  # Escalas fijas
+        facet_wrap(~ Variable_Descriptiva, scales = "free") +  # Escalas independientes
         labs(
           title = "Resumen por Municipio",
           x = "Municipio",
@@ -182,33 +195,31 @@ analisisDescriptivo <- function(input, output, session, datos_completos, carpeta
     } else if (tipo_grafico == "Barras Agrupadas") {
       # Lógica para barras agrupadas
       datos_grafico_agrupado <- datos %>%
-        group_by(Variable, Respuesta) %>%
+        group_by(Variable, Respuesta_Traducida) %>%
         summarise(Conteo = n(), .groups = "drop") %>%
         mutate(
           Porcentaje_Total = round((Conteo / total_muestra) * 100, 1),
-          Etiqueta = as.character(Respuesta)  # Sin procesamiento adicional de etiquetas
-        ) %>%
-        mutate(
-          Variable_Descriptiva = sapply(Variable, function(x) dic_titulo_graf[[x]] %||% x)
+          Etiqueta = Respuesta_Traducida,  # Etiquetas traducidas
+          Variable_Descriptiva = sapply(Variable, function(x) dic_titulo_graf[[x]] %||% x)  # Título descriptivo
         )
       
-      # Crear el gráfico de barras agrupadas
       ggplot(datos_grafico_agrupado, aes(x = Etiqueta, y = Conteo, fill = Variable)) +
-        geom_bar(stat = "identity", position = "dodge") +
+        geom_bar(stat = "identity", position = position_dodge(width = 0.9)) +
         geom_text(
-          aes(label = paste0(Porcentaje_Total, "%")),  # Mostrar porcentaje total
-          position = position_dodge(width = 0.9),
-          vjust = -0.5
+          aes(label = paste0(Porcentaje_Total, "%"), y = Conteo / 2),  # Colocar en el centro vertical
+          position = position_dodge(width = 0.9),  # Alinear las etiquetas con las barras
+          vjust = 0.5  # Centrar dentro de la barra
         ) +
         scale_y_continuous(expand = c(0, 0)) +
-        facet_wrap(~ Variable_Descriptiva, scales = "fixed") +  # Escalas fijas
+        facet_wrap(~ Variable_Descriptiva, scales = "free") +  # Escalas independientes
         labs(
-          title = "Resumen por Variable",
+          title = "Resumen por Variable y Respuesta",
           x = "Respuesta",
           y = "Conteo",
           fill = "Variable"
         ) +
-        theme_minimal()
+        theme_minimal() +
+        theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotar etiquetas del eje X
     }
   })
   

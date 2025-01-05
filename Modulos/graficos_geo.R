@@ -43,7 +43,11 @@ graficosGeo <- function(input, output, session, datos_relevantes, carpeta_inform
     Caso_6m = "Casos en últimos 6 meses",
     ZancViv = "Zancudos observados en la vivienda",
     LarvViv = "Larvas observadas en la vivienda",
-    fam_entrev = "Familias entrevistadas"
+    fam_entrev = "Familias entrevistadas",
+    H_Aeg = "Hembras de Aedes aegypti",
+    M_Aeg = "Machos de Aedes aegypti",
+    H_albo = "Hembras de Aedes albopictus",
+    M_albo = "Machos de Aedes albopictus"
   )
   
   # UI para el selector de municipios

@@ -1,0 +1,13 @@
+name: CENSALUD
+title: CENSALUD
+username: n03h8o-sulma-dubon
+account: n03h8o-sulma-dubon
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 13611008
+bundleId: 9605326
+url: https://n03h8o-sulma-dubon.shinyapps.io/CENSALUD/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: Encuesta_Normalizada.csv|EncuestaCompleta.xlsx|Implementacion.qmd|AnalisisBD

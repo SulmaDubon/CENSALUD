@@ -74,21 +74,28 @@ analisisGeoespacial <- function(input, output, session, datos_relevantes, carpet
     )
   })
   
-  observeEvent(input$guardar_grafico, {
-    req(datos_relevantes(), input$variable_mapa)
-    
-    # Filtrar datos por municipios seleccionados
-    datos <- datos_relevantes() %>%
-      filter(Municipio %in% input$municipios_filtro)
+  observeEvent(input$guardar_mapa, {
+    req(datos_relevantes(), input$variables_especies, carpeta_informe())
     
     # Crear el mapa
-    mapa <- crear_mapa(
-      data = datos,
-      variable = input$variable_mapa,
-      leyenda = variables_leyendas[[input$variable_mapa]],
-      municipios_seleccionados = input$municipios_filtro
-    )
-    
+    mapa <- leaflet(datos_filtrados) %>%
+      addTiles() %>%
+      purrr::walk(variables_seleccionadas, function(variable) {
+        leaflet::addCircleMarkers(
+          data = datos_filtrados,
+          lng = ~Coor_Long,
+          lat = ~Coor_Lat,
+          radius = 5,
+          color = "blue",
+          label = ~paste("Variable:", variable)
+        )
+      }) %>%
+      addLegend(
+        position = "bottomright",
+        title = "Variables Seleccionadas",
+        values = variables_seleccionadas,
+        pal = colorFactor("Set1", variables_seleccionadas)
+      )
     # Crear carpeta principal y subcarpeta
     carpeta_principal <- carpeta_informe()
     if (is.null(carpeta_principal) || !dir.exists(carpeta_principal)) {
@@ -124,6 +131,5 @@ analisisGeoespacial <- function(input, output, session, datos_relevantes, carpet
       type = "message"
     )
   })
-  
   
 }

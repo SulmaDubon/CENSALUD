@@ -1,4 +1,3 @@
-
 analisisEspeciesUI <- function(id) {
   ns <- NS(id)
   tagList(
@@ -118,4 +117,7 @@ analisisEspecies <- function(input, output, session, datos_relevantes, carpeta_i
   })
   
 }
+
+
+  
 

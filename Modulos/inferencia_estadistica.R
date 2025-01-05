@@ -2,37 +2,54 @@ inferenciaEstadisticaUI <- function(id) {
   ns <- NS(id)
   tagList(
     fluidRow(
+      # Variables en la parte superior
+      column(12,
+             fluidRow(
+               column(4,
+                      selectInput(
+                        ns("variable_dependiente"),
+                        "Seleccione Variable Dependiente:",
+                        choices = NULL
+                      )
+               ),
+               column(4,
+                      selectInput(
+                        ns("categoria_seleccionada"),
+                        "Seleccione Categoría de Variables Independientes:",
+                        choices = NULL
+                      )
+               ),
+               column(4,
+                      uiOutput(ns("checkbox_variables"))  # Variables independientes dinámicas
+               )
+             )
+      )
+    ),
+    fluidRow(
+      # Pruebas en el lateral izquierdo
       column(4,
-             selectInput(
-               ns("variable_dependiente"),
-               "Seleccione Variable Dependiente:",
-               choices = NULL
-             ),
-             selectInput(
-               ns("categoria_seleccionada"),
-               "Seleccione Categoría de Variables Independientes:",
-               choices = NULL
-             ),
-             uiOutput(ns("checkbox_variables"))  # Variables independientes dinámicas
-      ),
-      column(8,
              navlistPanel(
                tabPanel("Prueba de Fisher", 
                         tableOutput(ns("fisher_resultados")),
                         actionButton(ns("agregar_a_lista"), "Agregar a Lista") # Botón para agregar a la lista
                ),
-               tabPanel("Intervalos de Confianza", tableOutput(ns("intervalos_resultados")))
-             ),
-             
+               tabPanel("Intervalos de Confianza", 
+                        tableOutput(ns("intervalos_resultados"))
+               )
+             )
+      ),
+      # Resultados en el lado derecho
+      column(8,
              # Tabla para mostrar los resultados
-             tableOutput(ns("tabla_resultados")), 
+             tableOutput(ns("tabla_resultados")),
              
              # Botón para guardar la tabla
-             downloadButton(ns("guardar_tabla"), "Guardar Tabla") 
+             downloadButton(ns("guardar_tabla"), "Guardar Tabla")
       )
     )
   )
 }
+
 
 
 inferenciaEstadistica <- function(input, output, session, datos_completos, categorias, carpeta_informe) {
@@ -58,9 +75,17 @@ inferenciaEstadistica <- function(input, output, session, datos_completos, categ
   })
   
   # Llenar el selector de categorías
+  
   observe({
     req(categorias)
-    categorias_con_municipio <- c("Municipio" = "Municipio", categorias)
+    
+    # Excluir categorías no deseadas
+    categorias_filtradas <- categorias[!names(categorias) %in% c("Considerar", "Recolecta")]
+    
+    # Agregar la opción "Municipio" si es necesario
+    categorias_con_municipio <- c("Municipio" = "Municipio", categorias_filtradas)
+    
+    # Actualizar el selector
     updateSelectInput(
       session,
       "categoria_seleccionada",
@@ -68,6 +93,7 @@ inferenciaEstadistica <- function(input, output, session, datos_completos, categ
       selected = NULL
     )
   })
+  
   
   # Actualizar las variables según la categoría seleccionada
   output$checkbox_variables <- renderUI({
@@ -79,6 +105,9 @@ inferenciaEstadistica <- function(input, output, session, datos_completos, categ
       categorias[[input$categoria_seleccionada]]
     }
     
+    # Filtrar las variables para eliminar "Considerar" y "Recolecta"
+    variables <- variables[!variables %in% c("Considerar", "Recolecta")]
+    
     tags$div(
       style = "column-count: 3; column-gap: 20px;",
       checkboxGroupInput(
@@ -89,6 +118,7 @@ inferenciaEstadistica <- function(input, output, session, datos_completos, categ
       )
     )
   })
+  
   
   # Variable reactiva para almacenar los resultados
   resultados_lista <- reactiveVal(data.frame())

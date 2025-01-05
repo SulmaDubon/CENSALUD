@@ -1,4 +1,4 @@
-source("modulos/Funciones/funciones_cargadatos.R")
+source("Modulos/Funciones/funciones_cargadatos.R")
 
 # UI del módulo
 cargaDatosUI <- function(id) {

@@ -1,12 +1,12 @@
 source("Modulos/Funciones/funciones_generales.R")
 source("Modulos/Funciones/diccionario_respuestas.R")
 # Importar módulos
-source("modulos/carga_datos.R")
-source("modulos/visualizacion_geoespacial.R")
-source("modulos/analisis_descriptivo.R")
-source("modulos/inferencia_estadistica.R")
-source("modulos/regresion_modelos.R")
-source("modulos/analisis_multivariante.R")
+source("Modulos/carga_datos.R")
+source("Modulos/visualizacion_geoespacial.R")
+source("Modulos/analisis_descriptivo.R")
+source("Modulos/inferencia_estadistica.R")
+source("Modulos/regresion_modelos.R")
+source("Modulos/analisis_multivariante.R")
 
 
 categorias <- list(
