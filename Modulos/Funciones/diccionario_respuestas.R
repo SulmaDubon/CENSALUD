@@ -40,9 +40,8 @@ variables_si_no <- c(
   "Inf_prev", "Inf_Foll", "Inf_char", "Inf_tv_rad", "Inf_redsoc", "inf_otro", 
   "Resp_Soc", "Resp_Alc", "Resp_MINSAL", "Gote", "AlmBarril", "AlmCub", "AlmPila",
   "AlmOtro", "AlmNing", "ZancViv", "LarvViv", "RecBrl", "RecCub", "RecPila", "RecMct",
-  "RecLlnts", "RecOtros", "RecNing", "H_Aeg", "M_Aeg", "H_albo", "M_albo", "Abat_Uso"
-  
-  
+  "RecLlnts", "RecOtros", "RecNing", "H_Aeg", "M_Aeg", "H_albo", "M_albo", "Abat_Uso", 
+  "DENV_1", "DENV_2", "DENV_3", "DENV_4"
 )
 
 # Añadir al diccionario principal
@@ -136,7 +135,11 @@ dic_titulo_graf <- list(
   "H_Aeg" = "Presencia de hembra Aegypti en la vivienda",
   "M_Aeg" = "Presencia de macho Aegypti en la vivienda",
   "H_albo" = "Presencia de hembra Albopictus",
-  "M_albo" = "Presencia de macho Albopictus"
+  "M_albo" = "Presencia de macho Albopictus",
+  "DENV_1" = "Presencia de DENV1", 
+  "DENV_2" = "Presencia de DENV2",
+  "DENV_3" = "Presencia de DENV3",
+  "DENV_4" = "PResencia de DENV4"
 )
 
 

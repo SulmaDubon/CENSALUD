@@ -1,50 +1,49 @@
+source("Modulos/Funciones/diccionario_respuestas.R")
+
 inferenciaEstadisticaUI <- function(id) {
   ns <- NS(id)
   tagList(
+    tags$style(HTML("
+      .table-wrapper {
+        overflow-x: auto; /* Habilitar desplazamiento horizontal */
+        -webkit-overflow-scrolling: touch; /* Mejorar experiencia táctil */
+      }
+    ")),
     fluidRow(
-      # Variables en la parte superior
       column(12,
              fluidRow(
                column(4,
                       selectInput(
                         ns("variable_dependiente"),
-                        "Seleccione Variable Dependiente:",
+                        "Seleccione:",
                         choices = NULL
                       )
                ),
                column(4,
                       selectInput(
                         ns("categoria_seleccionada"),
-                        "Seleccione Categoría de Variables Independientes:",
+                        "Seleccione Categoría:",
                         choices = NULL
                       )
                ),
                column(4,
-                      uiOutput(ns("checkbox_variables"))  # Variables independientes dinámicas
+                      uiOutput(ns("checkbox_variables"))
                )
              )
       )
     ),
     fluidRow(
-      # Pruebas en el lateral izquierdo
-      column(4,
-             navlistPanel(
-               tabPanel("Prueba de Fisher", 
-                        tableOutput(ns("fisher_resultados")),
-                        actionButton(ns("agregar_a_lista"), "Agregar a Lista") # Botón para agregar a la lista
-               ),
-               tabPanel("Intervalos de Confianza", 
-                        tableOutput(ns("intervalos_resultados"))
-               )
-             )
+      column(4,  # Más estrecho para la tabla de contingencia
+             h4("Tabla de Contingencia"),
+             h4(textOutput(ns("nombre_variable_dependiente_contingencia"))),
+             tags$div(class = "table-wrapper", tableOutput(ns("tabla_contingencia"))),
+             actionButton(ns("guardar_contingencia"), "Guardar en Servidor")
       ),
-      # Resultados en el lado derecho
-      column(8,
-             # Tabla para mostrar los resultados
-             tableOutput(ns("tabla_resultados")),
-             
-             # Botón para guardar la tabla
-             downloadButton(ns("guardar_tabla"), "Guardar Tabla")
+      column(8,  # Más ancho para la tabla de resultados
+             h4("Resultados de las Pruebas"),
+             h4(textOutput(ns("nombre_variable_dependiente_resultados"))),
+             tags$div(class = "table-wrapper", tableOutput(ns("tabla_resultados"))),
+             actionButton(ns("guardar_resultados"), "Guardar en Servidor")
       )
     )
   )
@@ -64,6 +63,39 @@ inferenciaEstadistica <- function(input, output, session, datos_completos, categ
     LarvViv = "Larvas observadas en el área de vivienda"
   )
   
+  # Mostrar el nombre de la variable dependiente seleccionada
+  output$nombre_variable_dependiente_resultados <- renderText({
+    req(input$variable_dependiente)
+    variables_leyendas[[input$variable_dependiente]]
+  })
+  
+  output$nombre_variable_dependiente_contingencia <- renderText({
+    req(input$variable_dependiente)
+    variables_leyendas[[input$variable_dependiente]]
+  })
+  
+  
+  # Filtrar datos para excluir NA en la variable dependiente
+  datos_filtrados <- reactive({
+    datos <- datos_completos()
+    variable_dep <- input$variable_dependiente
+    
+    if (is.null(variable_dep)) {
+      return(datos)
+    }
+    
+    datos_filtrados <- datos[!is.na(datos[[variable_dep]]), ]
+    
+    if (nrow(datos) != nrow(datos_filtrados)) {
+      showNotification(
+        paste("Se excluyeron", nrow(datos) - nrow(datos_filtrados), "registros con NA en la variable dependiente."),
+        type = "warning"
+      )
+    }
+    
+    datos_filtrados
+  })
+  
   # Llenar las opciones de variables dependientes
   observe({
     req(categorias)
@@ -75,17 +107,10 @@ inferenciaEstadistica <- function(input, output, session, datos_completos, categ
   })
   
   # Llenar el selector de categorías
-  
   observe({
     req(categorias)
-    
-    # Excluir categorías no deseadas
-    categorias_filtradas <- categorias[!names(categorias) %in% c("Considerar", "Recolecta")]
-    
-    # Agregar la opción "Municipio" si es necesario
+    categorias_filtradas <- categorias[!names(categorias) %in% c("Considerar", "Recolecta", "Familia")]
     categorias_con_municipio <- c("Municipio" = "Municipio", categorias_filtradas)
-    
-    # Actualizar el selector
     updateSelectInput(
       session,
       "categoria_seleccionada",
@@ -94,20 +119,14 @@ inferenciaEstadistica <- function(input, output, session, datos_completos, categ
     )
   })
   
-  
   # Actualizar las variables según la categoría seleccionada
   output$checkbox_variables <- renderUI({
     req(input$categoria_seleccionada, categorias)
-    
     variables <- if (input$categoria_seleccionada == "Municipio") {
       "Municipio"
     } else {
       categorias[[input$categoria_seleccionada]]
     }
-    
-    # Filtrar las variables para eliminar "Considerar" y "Recolecta"
-    variables <- variables[!variables %in% c("Considerar", "Recolecta")]
-    
     tags$div(
       style = "column-count: 3; column-gap: 20px;",
       checkboxGroupInput(
@@ -119,152 +138,137 @@ inferenciaEstadistica <- function(input, output, session, datos_completos, categ
     )
   })
   
-  
-  # Variable reactiva para almacenar los resultados
-  resultados_lista <- reactiveVal(data.frame())
-  
-  # Lógica para Fisher (modificada)
-  output$fisher_resultados <- renderTable({
-    req(input$variable_dependiente, input$variables_independientes, datos_completos())
+  # Reactiva para la tabla de contingencia
+  tabla_contingencia_data <- reactive({
+    req(input$variable_dependiente, input$variables_independientes)
     
-    datos <- datos_completos()
+    datos <- datos_filtrados()
+    variable_dep <- input$variable_dependiente
+    variable_indep <- input$variables_independientes  # Selección múltiple
+    
+    # Crear tabla de contingencia con etiquetas descriptivas
+    tablas <- lapply(variable_indep, function(var_indep) {
+      # Crear tabla de contingencia
+      tabla <- table(datos[[var_indep]], datos[[variable_dep]])
+      
+      # Convertir valores numéricos a etiquetas usando el diccionario_respuestas
+      etiquetas_indep <- names(diccionario_respuestas[[var_indep]])[match(rownames(tabla), diccionario_respuestas[[var_indep]])]
+      etiquetas_dep <- names(diccionario_respuestas[[variable_dep]])[match(colnames(tabla), diccionario_respuestas[[variable_dep]])]
+      
+      # Si no hay etiquetas en el diccionario, mantener los valores originales
+      if (is.null(etiquetas_indep)) etiquetas_indep <- rownames(tabla)
+      if (is.null(etiquetas_dep)) etiquetas_dep <- colnames(tabla)
+      
+      # Convertir tabla a data.frame con etiquetas
+      tabla_df <- as.data.frame(tabla)
+      colnames(tabla_df) <- c("Categoría", "Dependiente", "Frecuencia")
+      
+      # Reestructurar para tener columnas separadas por categoría dependiente
+      tabla_wide <- reshape(tabla_df, idvar = "Categoría", timevar = "Dependiente", direction = "wide")
+      colnames(tabla_wide) <- c("Categoría", etiquetas_dep)
+      tabla_wide <- cbind(Variable = var_indep, tabla_wide)
+      
+      # Reemplazar las categorías con etiquetas descriptivas
+      tabla_wide$Categoría <- etiquetas_indep[match(tabla_wide$Categoría, rownames(tabla))]
+      tabla_wide
+    })
+    
+    # Combinar todas las tablas
+    do.call(rbind, tablas)
+  })
+  
+  
+  # Reactiva para la tabla de resultados
+  tabla_resultados_data <- reactive({
+    req(input$variable_dependiente, input$variables_independientes)
+    
+    datos <- datos_filtrados()
     variable_dep <- input$variable_dependiente
     variable_indep <- input$variables_independientes
     
-    if (length(variable_indep) > 0) {
-      fisher_tabla <- table(datos[[variable_dep]], datos[[variable_indep[1]]])
-      fisher_result <- fisher.test(fisher_tabla)
+    resultados <- lapply(variable_indep, function(var_indep) {
+      tabla_contingencia <- table(datos[[variable_dep]], datos[[var_indep]])
       
-      # Usamos broom para convertir la salida a un data frame
-      fisher_tidy <- broom::tidy(fisher_result)
-      
-      # Creamos una tabla con los resultados (modificada)
-      resultados <- data.frame(
-        Prueba = "Prueba exacta de Fisher",
-        "Tabla de Contingencia" = paste(capture.output(fisher_tabla), collapse = "\n"),
-        "Valor p" = fisher_tidy$p.value,
-        "Odds ratio" = fisher_tidy$estimate,
-        "IC Inferior" = fisher_tidy$conf.low,
-        "IC Superior" = fisher_tidy$conf.high,
-        check.names = FALSE,
-        stringsAsFactors = FALSE
-      )
-      
-      resultados
-    } else {
-      NULL
-    }
-  })
-  
-  # Función para agregar resultados a la lista
-  observeEvent(input$agregar_a_lista, {
-    req(input$variable_dependiente, input$variables_independientes, datos_completos())
-    
-    datos <- datos_completos()
-    variable_dep <- input$variable_dependiente
-    variable_indep <- input$variables_independientes
-    
-    if (length(variable_indep) > 0) {
-      fisher_tabla <- table(datos[[variable_dep]], datos[[variable_indep[1]]])
-      fisher_result <- fisher.test(fisher_tabla)
-      fisher_tidy <- broom::tidy(fisher_result)
-      
-      # Obtener la leyenda de la variable dependiente
-      leyenda_dep <- variables_leyendas[[variable_dep]]
-      
-      # Crear un data frame con los resultados
-      nuevo_resultado <- data.frame(
-        "Variable Dependiente" = leyenda_dep,
-        "Variable Independiente" = variable_indep[1],
-        "Valor p" = fisher_tidy$p.value,
-        "Significativo" = ifelse(fisher_tidy$p.value < 0.05, "Sí", "No"),
-        "Odds Ratio" = fisher_tidy$estimate
-      )
-      
-      # Agregar el nuevo resultado a la lista
-      resultados_lista(rbind(resultados_lista(), nuevo_resultado))
-    }
-  })
-  
-  # Mostrar la tabla de resultados
-  output$tabla_resultados <- renderTable({
-    req(nrow(resultados_lista()) > 0)
-    
-    # Agregar encabezado a la tabla
-    tabla_final <- resultados_lista()
-    colnames(tabla_final) <- c("Variable Dependiente", "Variable Independiente", "Valor p", "Significativo", "Odds Ratio")
-    
-    tabla_final
-  })
-  
-  # Guardar la tabla en la carpeta "informe"
-  output$guardar_tabla <- downloadHandler(
-    filename = function() {
-      paste("resultados_fisher", Sys.Date(), ".csv", sep = "")
-    },
-    content = function(file) {
-      # Construir la ruta completa del archivo
-      ruta_archivo <- file.path(carpeta_informe(), file)
-      
-      # Imprimir la ruta del archivo en la consola para verificar
-      print(paste("Guardando la tabla en:", ruta_archivo))
-      
-      # Intentar crear la carpeta "informe" si no existe
-      if (!dir.exists(carpeta_informe())) {
-        dir.create(carpeta_informe())
-        print("Carpeta 'informe' creada.")
+      if (ncol(tabla_contingencia) > 2 || nrow(tabla_contingencia) > 2) {
+        chi_result <- chisq.test(tabla_contingencia)
+        data.frame(
+          Variable_Independiente = var_indep,
+          Prueba = "Chi-Cuadrado",
+          "Valor p" = chi_result$p.value,
+          "Estadístico Chi-Cuadrado" = chi_result$statistic,
+          "Grados de Libertad" = chi_result$parameter,
+          "Odds Ratio" = NA,
+          "IC Inferior" = NA,
+          "IC Superior" = NA,
+          check.names = FALSE
+        )
+      } else {
+        fisher_result <- fisher.test(tabla_contingencia)
+        data.frame(
+          Variable_Independiente = var_indep,
+          Prueba = "Fisher",
+          "Valor p" = fisher_result$p.value,
+          "Odds Ratio" = fisher_result$estimate,
+          "IC Inferior" = fisher_result$conf.int[1],
+          "IC Superior" = fisher_result$conf.int[2],
+          "Estadístico Chi-Cuadrado" = NA,
+          "Grados de Libertad" = NA,
+          check.names = FALSE
+        )
       }
-      
-      # Guardar la tabla en la ruta especificada
-      write.csv(resultados_lista(), ruta_archivo, row.names = FALSE)
-      print(paste("Tabla guardada en:", ruta_archivo))
-    }
-  )
+    })
+    
+    do.call(rbind, resultados)
+  })
   
-  # Función para calcular el tamaño de la muestra
-  calcular_tamaño_muestra <- function(p) {
-    z <- qnorm(0.975)  # Valor Z para un nivel de confianza del 95%
-    e <- 0.05  # Margen de error del 5%
-    n <- (z^2 * p * (1 - p)) / e^2
-    return(ceiling(n))  # Redondear hacia arriba
-  }
+  # Renderizar las tablas
+  output$tabla_contingencia <- renderTable({
+    req(tabla_contingencia_data())
+    tabla_contingencia_data()
+  })
   
-  # Lógica para Intervalos de Confianza 
-  output$intervalos_resultados <- renderTable({
-    req(input$variable_dependiente, datos_completos())
+  output$tabla_resultados <- renderTable({
+    req(tabla_resultados_data())
+    tabla_resultados_data()
+  })
+  
+  # Guardar tabla de contingencia en el servidor
+  observeEvent(input$guardar_contingencia, {
+    req(carpeta_informe, tabla_contingencia_data())
     
-    datos <- datos_completos()
-    variable_dep <- input$variable_dependiente
+    # Obtener los datos de la tabla de contingencia
+    contingencia <- tabla_contingencia_data()
     
-    # Cálculo de proporciones e intervalos de confianza
-    tabla <- datos %>%
-      group_by(!!sym(variable_dep)) %>%
-      summarise(
-        n = n(),
-        p = n() / nrow(datos),
-        .groups = "drop"
-      ) %>%
-      mutate(
-        IC_Lower = p - qnorm(0.975) * sqrt((p * (1 - p)) / nrow(datos)),
-        IC_Upper = p + qnorm(0.975) * sqrt((p * (1 - p)) / nrow(datos))
-      )
+    # Definir el nombre del archivo
+    nombre_archivo <- file.path(carpeta_informe(), paste0("tabla_contingencia_", Sys.Date(), ".xlsx"))
     
-    # Calcular el tamaño de la muestra
-    tabla <- tabla %>%
-      rowwise() %>%
-      mutate(Tamaño_muestra = calcular_tamaño_muestra(p))
+    # Guardar el archivo en el servidor
+    openxlsx::write.xlsx(contingencia, nombre_archivo)
     
-    # Agregar la leyenda de la variable dependiente
-    tabla <- tabla %>%
-      mutate("Variable Dependiente" = variables_leyendas[[variable_dep]]) %>%
-      select("Variable Dependiente", everything())
+    # Notificar al usuario
+    showNotification(paste("Tabla de contingencia guardada en:", nombre_archivo), type = "message")
+  })
+  
+  # Guardar tabla de resultados en el servidor
+  observeEvent(input$guardar_resultados, {
+    req(carpeta_informe, tabla_resultados_data())
     
-    # Agregar título a la tabla
-    tabla_final <- tabla
-    colnames(tabla_final) <- c("Variable Dependiente", "Categoría", "n", "p", "IC Inferior", "IC Superior", "Tamaño de muestra")
+    # Obtener los datos de la tabla de resultados
+    resultados <- tabla_resultados_data()
     
-    tabla_final
+    # Definir el nombre del archivo
+    nombre_archivo <- file.path(carpeta_informe(), paste0("tabla_resultados_", Sys.Date(), ".xlsx"))
+    
+    # Guardar el archivo en el servidor
+    openxlsx::write.xlsx(resultados, nombre_archivo)
+    
+    # Notificar al usuario
+    showNotification(paste("Tabla de resultados guardada en:", nombre_archivo), type = "message")
   })
 }
+
+
+
+
 
 

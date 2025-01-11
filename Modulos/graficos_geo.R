@@ -1,5 +1,3 @@
-#source("modulos/Funciones/funciones_geoespaciales.R")  
-#source("modulos/Funciones/funciones_cargadatos.R")
 
 graficosGeoUI <- function(id) {
   ns <- NS(id)
@@ -47,7 +45,12 @@ graficosGeo <- function(input, output, session, datos_relevantes, carpeta_inform
     H_Aeg = "Hembras de Aedes aegypti",
     M_Aeg = "Machos de Aedes aegypti",
     H_albo = "Hembras de Aedes albopictus",
-    M_albo = "Machos de Aedes albopictus"
+    M_albo = "Machos de Aedes albopictus",
+    DENV_1 = "Presencia de DENV1", 
+    DENV_2 = "Presencia de DENV2",
+    DENV_3 = "Presencia de DENV3",
+    DENV_4 = "PResencia de DENV4"
+    
   )
   
   # UI para el selector de municipios
@@ -123,37 +126,62 @@ graficosGeo <- function(input, output, session, datos_relevantes, carpeta_inform
   observeEvent(input$guardar_grafico, {
     req(datos_relevantes(), input$variable_seleccionada, carpeta_informe())
     
-    # Crear carpeta principal si no existe
-    carpeta_principal <- carpeta_informe()
-    if (is.null(carpeta_principal) || !dir.exists(carpeta_principal)) {
-      carpeta_principal <- crearCarpetaUnica()
-      carpeta_informe(carpeta_principal)  # Actualizar reactivo
+    # Validar que la carpeta base existe
+    if (is.null(carpeta_informe()) || !dir.exists(carpeta_informe())) {
+      showNotification(
+        "La carpeta no existe. Cree una carpeta desde el módulo Carga de Datos antes de guardar.",
+        type = "error"
+      )
+      return()
     }
     
     # Crear subcarpeta para gráficos de dispersión
-    subcarpeta <- file.path(carpeta_principal, "graficos_dispersion")
+    subcarpeta <- file.path(carpeta_informe(), "graficos_dispersion")
     if (!dir.exists(subcarpeta)) {
-      dir.create(subcarpeta, recursive = TRUE)
+      dir.create(subcarpeta)
     }
     
     # Generar un nombre único para el archivo
-    nombre_archivo <- generar_nombre_unico(
+    nombre_base <- generar_nombre_unico(
       variable_leyenda = variables_leyendas[[input$variable_seleccionada]],
       municipios = input$municipios_filtro
     )
     
+    # Normalizar el nombre del archivo
+    nombre_base <- gsub("[^[:alnum:]_]", "_", nombre_base)  # Reemplazar caracteres especiales por "_"
+    
+    # Agregar un contador si el nombre ya existe
+    contador <- 1
+    archivo_html <- file.path(subcarpeta, paste0(nombre_base, ".html"))
+    archivo_png <- file.path(subcarpeta, paste0(nombre_base, ".png"))
+    while (file.exists(archivo_html) || file.exists(archivo_png)) {
+      contador <- contador + 1
+      archivo_html <- file.path(subcarpeta, paste0(nombre_base, "_", contador, ".html"))
+      archivo_png <- file.path(subcarpeta, paste0(nombre_base, "_", contador, ".png"))
+    }
+    
     # Guardar el gráfico como HTML
-    archivo_html <- file.path(subcarpeta, paste0(nombre_archivo, ".html"))
-    htmlwidgets::saveWidget(grafico_actual(), archivo_html, selfcontained = TRUE)
-    
-    # Guardar el gráfico como PNG
-    archivo_png <- file.path(subcarpeta, paste0(nombre_archivo, ".png"))
-    if (!webshot::is_phantomjs_installed()) webshot::install_phantomjs()
-    webshot::webshot(archivo_html, file = archivo_png)
-    
-    # Notificar éxito
-    showNotification(paste("Gráfico guardado correctamente como:", nombre_archivo), type = "message")
+    tryCatch({
+      htmlwidgets::saveWidget(grafico_actual(), archivo_html, selfcontained = TRUE)
+      
+      # Guardar el gráfico como PNG con webshot
+      if (!webshot::is_phantomjs_installed()) {
+        webshot::install_phantomjs()
+      }
+      webshot::webshot(archivo_html, file = archivo_png)
+      
+      # Notificar éxito
+      showNotification(paste("Gráfico guardado correctamente como:", basename(archivo_html)), type = "message")
+    }, error = function(e) {
+      # Notificar error
+      showNotification(
+        "Error al guardar el gráfico. Verifique que PhantomJS está instalado correctamente.",
+        type = "error"
+      )
+    })
   })
+  
 }
+
 
 

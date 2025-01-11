@@ -1,6 +1,3 @@
-#source("modulos/Funciones/funciones_geoespaciales.R")  
-#source("modulos/Funciones/funciones_cargadatos.R")
-
 # UI del módulo Análisis Geoespacial
 
 analisisGeoespacialUI <- function(id) {
@@ -28,19 +25,22 @@ analisisGeoespacialUI <- function(id) {
 }
 
 
-# Lógica del módulo Análisis Geoespacial
-
+# Lógica 
 analisisGeoespacial <- function(input, output, session, datos_relevantes, carpeta_informe) {
   ns <- session$ns
   
-  # Leyendas para las variables
+  # Leyendas de las variables
   variables_leyendas <- list(
     FamDiag = "Familiar diagnosticado",
     FamHosp = "Familiar hospitalizado",
     Caso_6m = "Casos en últimos 6 meses",
     ZancViv = "Zancudos observados en la vivienda",
     LarvViv = "Larvas observadas en la vivienda",
-    fam_entrev = "Familias entrevistadas"
+    fam_entrev = "Familias entrevistadas",
+    DENV_1 = "Presencia de DENV1", 
+    DENV_2 = "Presencia de DENV2",
+    DENV_3 = "Presencia de DENV3",
+    DENV_4 = "PResencia de DENV4"
   )
   
   # Actualizar selectores dinámicos
@@ -61,7 +61,7 @@ analisisGeoespacial <- function(input, output, session, datos_relevantes, carpet
     )
   })
   
-  # Renderizar el mapa interactivo
+  # Renderizar el mapa
   output$mapa_geoespacial <- renderLeaflet({
     req(datos_relevantes(), input$variable_mapa, input$municipios_filtro)
     datos <- datos_relevantes() %>%
@@ -74,62 +74,53 @@ analisisGeoespacial <- function(input, output, session, datos_relevantes, carpet
     )
   })
   
-  observeEvent(input$guardar_mapa, {
-    req(datos_relevantes(), input$variables_especies, carpeta_informe())
+  # Guardar gráficos
+  observeEvent(input$guardar_grafico, {
+    carpeta <- carpeta_informe()
     
-    # Crear el mapa
-    mapa <- leaflet(datos_filtrados) %>%
-      addTiles() %>%
-      purrr::walk(variables_seleccionadas, function(variable) {
-        leaflet::addCircleMarkers(
-          data = datos_filtrados,
-          lng = ~Coor_Long,
-          lat = ~Coor_Lat,
-          radius = 5,
-          color = "blue",
-          label = ~paste("Variable:", variable)
-        )
-      }) %>%
-      addLegend(
-        position = "bottomright",
-        title = "Variables Seleccionadas",
-        values = variables_seleccionadas,
-        pal = colorFactor("Set1", variables_seleccionadas)
+    if (is.null(carpeta) || !dir.exists(carpeta)) {
+      showNotification(
+        "La carpeta no existe. Cree una carpeta desde el módulo Carga de Datos antes de guardar.",
+        type = "error"
       )
-    # Crear carpeta principal y subcarpeta
-    carpeta_principal <- carpeta_informe()
-    if (is.null(carpeta_principal) || !dir.exists(carpeta_principal)) {
-      carpeta_principal <- crearCarpetaUnica()
-      carpeta_informe(carpeta_principal)  # Actualizar reactivo
+      return()
     }
     
-    carpeta_guardado <- file.path(carpeta_principal, "mapas_interactivos")
+    req(datos_relevantes(), input$variable_mapa, input$municipios_filtro)
+    datos <- datos_relevantes() %>%
+      filter(Municipio %in% input$municipios_filtro)
+    
+    # Crear el mapa
+    mapa <- crear_mapa(
+      data = datos,
+      variable = input$variable_mapa,
+      leyenda = variables_leyendas[[input$variable_mapa]],
+      municipios_seleccionados = input$municipios_filtro
+    )
+    
+    # Crear subcarpeta para mapas
+    carpeta_guardado <- file.path(carpeta, "mapas_interactivos")
     if (!dir.exists(carpeta_guardado)) dir.create(carpeta_guardado, recursive = TRUE)
     
-    cat("Leyenda:", variables_leyendas[[input$variable_mapa]], "\n")
-    cat("Municipios seleccionados:", paste(input$municipios_filtro, collapse = ", "), "\n")
-    
-    
-    # Generar nombre único con la leyenda y municipios seleccionados
+    # Generar nombre único del archivo
     nombre_archivo <- generar_nombre_unico(
-      variable_leyenda = variables_leyendas[[input$variable_mapa]],  # Corregido
+      variable_leyenda = variables_leyendas[[input$variable_mapa]],
       municipios = input$municipios_filtro
     )
     
-    # Guardar directamente como HTML
+    # Guardar como HTML
     archivo_html <- file.path(carpeta_guardado, paste0(nombre_archivo, ".html"))
     htmlwidgets::saveWidget(mapa, archivo_html, selfcontained = TRUE)
     
-    # Guardar como PNG utilizando webshot
+    # Guardar como PNG
     archivo_png <- file.path(carpeta_guardado, paste0(nombre_archivo, ".png"))
     if (!webshot::is_phantomjs_installed()) webshot::install_phantomjs()
     webshot::webshot(archivo_html, file = archivo_png)
     
-    # Notificar éxito
     showNotification(
       paste("Gráfico guardado correctamente como:", nombre_archivo),
       type = "message"
     )
   })
-  
 }
+

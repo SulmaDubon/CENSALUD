@@ -15,29 +15,29 @@ analisisDescriptivoUI <- function(id) {
                ns("incluir_na"),
                "Incluir NA en el análisis",
                value = TRUE
-             )  # Nueva opción para incluir/excluir NA
+             ),
+             selectInput(
+               ns("tipo_grafico"),
+               "Tipo de Gráfico:",
+               choices = c("Barras Agrupadas", "Barras Apiladas"),
+               selected = "Barras Agrupadas"
+             )
       ),
       column(8,
              uiOutput(ns("checkbox_variables"))
       )
     ),
     fluidRow(
-      column(6, 
-             tableOutput(ns("tabla_resumen"))
+      column(4, 
+             h4("Tabla de frecuencia"),  # Título de la tabla
+             DTOutput(ns("tabla_resumen"))  # Tabla interactiva con scroll
       ),
-      column(6, 
-             plotOutput(ns("grafico_resumen"), height = "400px")
-      )
-    ),
-    fluidRow(
-      column(12,
-             tableOutput(ns("tabla_leyenda"))
+      column(8, 
+             plotOutput(ns("grafico_resumen"), height = "500px")  # Más espacio para el gráfico
       )
     )
   )
 }
-
-
 
 analisisDescriptivo <- function(input, output, session, datos_completos, carpeta_informe, categorias) {
   ns <- session$ns
@@ -61,21 +61,13 @@ analisisDescriptivo <- function(input, output, session, datos_completos, carpeta
     nombres_mapeados <- setNames(variables, 
                                  sapply(variables, function(x) dic_titulo_graf[[x]] %||% x))
     
-    tagList(
-      tags$div(
-        style = "column-count: 3; column-gap: 20px;",
-        checkboxGroupInput(
-          ns("variables_seleccionadas"),
-          label = "Seleccione las variables:",
-          choices = nombres_mapeados,
-          selected = NULL
-        )
-      ),
-      selectInput(
-        ns("tipo_grafico"),
-        "Tipo de Gráfico:",
-        choices = c("Barras Agrupadas", "Barras Apiladas"),
-        selected = "Barras Agrupadas"
+    tags$div(
+      style = "column-count: 3; column-gap: 20px;",
+      checkboxGroupInput(
+        ns("variables_seleccionadas"),
+        label = "Seleccione las variables:",
+        choices = nombres_mapeados,
+        selected = NULL
       )
     )
   })
@@ -95,13 +87,13 @@ analisisDescriptivo <- function(input, output, session, datos_completos, carpeta
     
     # Seleccionar variables y mantener Municipio
     datos_long <- datos %>%
-      select(all_of(variables), Municipio) %>%  # Incluir Municipio en los datos seleccionados
+      select(all_of(variables), Municipio) %>% 
       pivot_longer(cols = all_of(variables), names_to = "Variable", values_to = "Respuesta")
     
     # Aplicar el filtro de NA por variable
     if (!input$incluir_na) {
       datos_long <- datos_long %>%
-        filter(!is.na(Respuesta))  # Excluir NAs por variable
+        filter(!is.na(Respuesta))
     }
     
     if (nrow(datos_long) == 0) {
@@ -113,18 +105,17 @@ analisisDescriptivo <- function(input, output, session, datos_completos, carpeta
   })
   
   # Generar la tabla resumen
-  output$tabla_resumen <- renderTable({
+  output$tabla_resumen <- renderDT({
     datos <- datos_filtrados()
     req(datos)
     
-    # Total de registros en la población
     total_muestra <- nrow(datos_completos())
     
     tabla_resumen <- datos %>%
       group_by(Variable, Respuesta) %>%
       summarise(Conteo = n(), .groups = "drop") %>%
       mutate(
-        Porcentaje_Total = round((Conteo / total_muestra) * 100, 1)  # Porcentaje respecto al total de registros
+        Porcentaje_Total = round((Conteo / total_muestra) * 100, 1)
       ) %>%
       arrange(Variable, Respuesta)
     
@@ -133,37 +124,43 @@ analisisDescriptivo <- function(input, output, session, datos_completos, carpeta
       return(NULL)
     }
     
-    tabla_resumen
-  }, rownames = TRUE)
+    datatable(
+      tabla_resumen,
+      options = list(
+        scrollX = TRUE,  # Desplazamiento horizontal
+        scrollY = "300px",  # Desplazamiento vertical
+        paging = FALSE,  # Sin paginación
+        searching = FALSE,  # Sin barra de búsqueda
+        info = FALSE  # Sin información adicional
+      ),
+      rownames = FALSE
+    )
+  })
   
-  
- # Generar Grafico
+  # Generar gráfico
   output$grafico_resumen <- renderPlot({
     datos <- datos_filtrados()
     req(datos)
     
-    total_muestra <- nrow(datos_completos())  # Total de registros en la población
+    total_muestra <- nrow(datos_completos())
     
-    tipo_grafico <- input$tipo_grafico  # Selector del tipo de gráfico
+    tipo_grafico <- input$tipo_grafico
     
-    # Función para traducir valores usando el diccionario
     traducir_respuestas <- function(variable, respuesta) {
       if (!is.null(diccionario_respuestas[[variable]])) {
         nombres <- names(diccionario_respuestas[[variable]])
         valores <- diccionario_respuestas[[variable]]
         return(nombres[match(respuesta, valores)])
       }
-      return(as.character(respuesta))  # Si no hay traducción, retornar el valor original
+      return(as.character(respuesta))
     }
     
-    # Aplicar la traducción a las respuestas
     datos <- datos %>%
       mutate(
         Respuesta_Traducida = mapply(traducir_respuestas, Variable, Respuesta)
       )
     
     if (tipo_grafico == "Barras Apiladas") {
-      # Lógica para barras apiladas
       datos_grafico_apilado <- datos %>%
         group_by(Variable, Respuesta_Traducida, Municipio) %>%
         summarise(Conteo = n(), .groups = "drop") %>%
@@ -179,11 +176,11 @@ analisisDescriptivo <- function(input, output, session, datos_completos, carpeta
       ggplot(datos_grafico_apilado, aes(x = Municipio, y = Conteo, fill = Respuesta_Traducida)) +
         geom_bar(stat = "identity", position = "stack") +
         geom_text(
-          aes(label = paste0(Porcentaje_Local, "%")),  # Mostrar porcentaje local
-          position = position_stack(vjust = 0.5)  # Centrado en la barra
+          aes(label = paste0(Porcentaje_Local, "%")),  
+          position = position_stack(vjust = 0.5)
         ) +
         scale_y_continuous(expand = c(0, 0)) +
-        facet_wrap(~ Variable_Descriptiva, scales = "free") +  # Escalas independientes
+        facet_wrap(~ Variable_Descriptiva, scales = "free") +  
         labs(
           title = "Resumen por Municipio",
           x = "Municipio",
@@ -193,25 +190,24 @@ analisisDescriptivo <- function(input, output, session, datos_completos, carpeta
         theme_minimal()
       
     } else if (tipo_grafico == "Barras Agrupadas") {
-      # Lógica para barras agrupadas
       datos_grafico_agrupado <- datos %>%
         group_by(Variable, Respuesta_Traducida) %>%
         summarise(Conteo = n(), .groups = "drop") %>%
         mutate(
           Porcentaje_Total = round((Conteo / total_muestra) * 100, 1),
-          Etiqueta = Respuesta_Traducida,  # Etiquetas traducidas
-          Variable_Descriptiva = sapply(Variable, function(x) dic_titulo_graf[[x]] %||% x)  # Título descriptivo
+          Etiqueta = Respuesta_Traducida,
+          Variable_Descriptiva = sapply(Variable, function(x) dic_titulo_graf[[x]] %||% x)
         )
       
       ggplot(datos_grafico_agrupado, aes(x = Etiqueta, y = Conteo, fill = Variable)) +
         geom_bar(stat = "identity", position = position_dodge(width = 0.9)) +
         geom_text(
-          aes(label = paste0(Porcentaje_Total, "%"), y = Conteo / 2),  # Colocar en el centro vertical
-          position = position_dodge(width = 0.9),  # Alinear las etiquetas con las barras
-          vjust = 0.5  # Centrar dentro de la barra
+          aes(label = paste0(Porcentaje_Total, "%"), y = Conteo / 2),
+          position = position_dodge(width = 0.9),
+          vjust = 0.5
         ) +
         scale_y_continuous(expand = c(0, 0)) +
-        facet_wrap(~ Variable_Descriptiva, scales = "free") +  # Escalas independientes
+        facet_wrap(~ Variable_Descriptiva, scales = "free") +  
         labs(
           title = "Resumen por Variable y Respuesta",
           x = "Respuesta",
@@ -219,15 +215,10 @@ analisisDescriptivo <- function(input, output, session, datos_completos, carpeta
           fill = "Variable"
         ) +
         theme_minimal() +
-        theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotar etiquetas del eje X
+        theme(axis.text.x = element_text(angle = 45, hjust = 1))
     }
   })
-  
 }
-
-
-
-
 
 
 

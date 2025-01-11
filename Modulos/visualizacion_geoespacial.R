@@ -1,22 +1,30 @@
 # Cargar funciones geoespaciales
 source("Modulos/Funciones/funciones_geoespaciales.R")
-source("Modulos/Funciones/funciones_cargadatos.R")
 
 # Cargar submódulos
 source("Modulos/Funciones/funciones_geoespaciales.R")
 source("Modulos/analisis_geoespacial.R")
 source("Modulos/analisis_especies.R")
 source("Modulos/graficos_geo.R")
+source("Modulos/vden.R")
+
+
 
 # UI para Visualización Geoespacial
 visualizacionGeoespacialUI <- function(id) {
   ns <- NS(id)
-  navlistPanel(
-    "Opciones de Visualización",
-    tabPanel("Análisis Geoespacial", analisisGeoespacialUI(ns("analisis_geoespacial_ui"))),
-    tabPanel("Especies", analisisEspeciesUI(ns("analisis_especies_ui"))),
-    tabPanel("Gráficos de Dispersión", graficosGeoUI(ns("graficos_geo_ui"))),
-    widths = c(3, 9)
+  tagList(
+    tags$head(
+      tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
+    ),
+    navlistPanel(
+      "Opciones de Visualización",
+      tabPanel("Análisis Geoespacial", analisisGeoespacialUI(ns("analisis_geoespacial_ui"))),
+      tabPanel("Especies", analisisEspeciesUI(ns("analisis_especies_ui"))),
+      tabPanel("Gráficos de Dispersión", graficosGeoUI(ns("graficos_geo_ui"))),
+      tabPanel("Visualización DENV", vdenUI(ns("vden_ui"))),
+      widths = c(3, 9)
+    )
   )
 }
 
@@ -25,6 +33,12 @@ visualizacionGeoespacialUI <- function(id) {
 # Servidor para Visualización Geoespacial
 visualizacionGeoespacial <- function(input, output, session, datos_completos, carpeta_informe) {
   ns <- session$ns
+  
+  observe({
+    req(datos_completos())
+    print("Columnas disponibles en datos_completos():")
+    print(names(datos_completos()))
+  })
   
   # Reactivo para datos procesados y relevantes
   datos_relevantes <- reactive({
@@ -41,7 +55,7 @@ visualizacionGeoespacial <- function(input, output, session, datos_completos, ca
   callModule(
     analisisGeoespacial,
     "analisis_geoespacial_ui",
-    datos_relevantes = datos_relevantes,  # Asegúrate de que este nombre coincide
+    datos_relevantes = datos_relevantes,  
     carpeta_informe = carpeta_informe
   )
   
@@ -58,5 +72,13 @@ visualizacionGeoespacial <- function(input, output, session, datos_completos, ca
     datos_relevantes = datos_relevantes, 
     carpeta_informe = carpeta_informe
   )
+  
+  callModule(
+    vden,
+    "vden_ui",
+    datos_relevantes = datos_relevantes,
+    carpeta_informe = carpeta_informe
+  )
+  
   
 }

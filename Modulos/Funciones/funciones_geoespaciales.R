@@ -19,13 +19,21 @@ convertir_a_decimal <- function(coordenada) {
 limpiar_coordenadas <- function(datos, coord_vars) {
   stopifnot(all(coord_vars %in% names(datos)))
   
-  datos %>%
+  print("Columnas antes de limpiar coordenadas:")
+  print(names(datos))
+  
+  datos <- datos %>%
     mutate(
       Coor_Lat = map_dbl(.data[[coord_vars[1]]], convertir_a_decimal),
       Coor_Long = map_dbl(.data[[coord_vars[2]]], convertir_a_decimal)
-    ) %>%
-    drop_na(Coor_Lat, Coor_Long)  # Eliminar filas con coordenadas NA
+    )
+  
+  print("Columnas después de limpiar coordenadas:")
+  print(names(datos))
+  
+  return(datos)
 }
+
 
 #-------------------------------------------------------
 # Función para crear datos relevantes
@@ -33,18 +41,27 @@ limpiar_coordenadas <- function(datos, coord_vars) {
 crear_datos_relevantes <- function(datos) {
   columnas_requeridas <- c("ID", "Municipio", "Coor_Lat", "Coor_Long", 
                            "FamDiag", "FamHosp", "Caso_6m", "ZancViv", 
-                           "LarvViv", "H_Aeg", "M_Aeg", "H_albo", "M_albo")
+                           "LarvViv", "H_Aeg", "M_Aeg", "H_albo", 
+                           "M_albo", "DENV_1", "DENV_2", "DENV_3", "DENV_4")
   
-  stopifnot(all(columnas_requeridas %in% names(datos)))
+  # Verifica si faltan columnas
+  print("Columnas antes de limpiar:")
+  print(names(datos))
   
-  datos %>%
+  datos <- datos %>%
     limpiar_coordenadas(c("Coor_Lat", "Coor_Long")) %>%
     mutate(
       Coor_Long = if_else(Coor_Long > 0, -Coor_Long, Coor_Long),
       fam_entrev = 1
     ) %>%
     select(all_of(columnas_requeridas), fam_entrev)
+  
+  print("Columnas después de procesar:")
+  print(names(datos))
+  
+  return(datos)
 }
+
 
 #----------------------------------------------
 # Función para crear el mapa interactivo
@@ -54,21 +71,31 @@ crear_mapa <- function(data, variable, leyenda, municipios_seleccionados = NULL)
     filter(Municipio %in% (municipios_seleccionados %||% unique(data$Municipio)),
            .data[[variable]] == 1)
   
+  # Crear ícono personalizado
+  icono_personalizado <- makeAwesomeIcon(
+    icon = "map-marker",
+    markerColor = "red",  # Ajuste de color base
+    iconColor = "#ffffff" # Color del ícono interno
+  )
+  
   leaflet(data) %>%
     addTiles() %>%
-    addMarkers(
+    addAwesomeMarkers(
       lng = ~Coor_Long, lat = ~Coor_Lat,
+      icon = icono_personalizado,
       popup = ~paste("<strong>ID:</strong>", ID,
                      "<br><strong>Municipio:</strong>", Municipio,
                      "<br><strong>Latitud:</strong>", round(Coor_Lat, 3),
                      "<br><strong>Longitud:</strong>", round(Coor_Long, 3))
     ) %>%
-    addLegend(position = "bottomright", colors = "blue", labels = leyenda, title = "Leyenda") %>%
+    addLegend(position = "bottomright", colors = "#8b0e13", labels = leyenda, title = "Leyenda") %>%
     addControl(
       html = paste("Municipios seleccionados:", paste(municipios_seleccionados, collapse = ", ")),
       position = "topright"
     )
 }
+
+
 
 #----------------------------------------------------
 # FUNCION OBTENER NOMBRES PARA GUARDAR GRAFICOS
@@ -157,18 +184,27 @@ generar_mapa_especies <- function(datos, variables_especies, municipios_seleccio
       next
     }
     
-    if (grepl("H_", variable)) {
-      # Hembras
+    if (variable %in% c("H_Aeg", "H_albo", "DENV_1", "DENV_2", "DENV_3", "DENV_4")) {
+      # Hembras y DENV variables: círculos de colores diferentes
+      color <- switch(
+        variable,
+        "H_Aeg" = "yellow",
+        "H_albo" = "green",
+        "DENV_1" = "blue",
+        "DENV_2" = "purple",
+        "DENV_3" = "orange",
+        "DENV_4" = "pink"
+      )
       mapa <- mapa %>%
         addCircleMarkers(
           lng = datos_variable$Coor_Long,
           lat = datos_variable$Coor_Lat,
-          color = "yellow",
-          fillColor = ifelse(variable == "H_Aeg", "red", "green"),
+          color = "black",  # Borde negro
+          fillColor = color,
           fillOpacity = 0.6,
           radius = 8,
           stroke = TRUE,
-          weight = 4,
+          weight = 2,
           group = variable,
           popup = paste(
             "<strong>Variable:</strong>", variables_leyendas[[variable]],
@@ -176,7 +212,7 @@ generar_mapa_especies <- function(datos, variables_especies, municipios_seleccio
           )
         )
     } else {
-      # Machos
+      # Machos: triángulos
       icono <- crear_icono(variable)
       mapa <- mapa %>%
         addMarkers(
@@ -198,4 +234,7 @@ generar_mapa_especies <- function(datos, variables_especies, municipios_seleccio
   
   return(mapa)
 }
+
+  
+  
 

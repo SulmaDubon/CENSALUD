@@ -1,0 +1,164 @@
+
+/* Fondo general */
+body {
+  background-color: #f0f0f0; /* Fondo claro */
+  font-family: 'Roboto', sans-serif;
+  padding-top: 80px; /* Espacio para la barra fija */
+}
+
+/* Barra superior */
+.barra-superior {
+  background-color: #ffffff; /* Fondo blanco */
+  border-bottom: 2px solid #8b0e13; /* Línea inferior roja */
+  height: 60px; /* Altura ajustada */
+  display: flex;
+  align-items: center;
+  padding: 0 20px; /* Espaciado interno */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000; /* Siempre visible */
+}
+.barra-superior img {
+  height: 40px; /* Logo más estrecho */
+  margin-right: 10px; /* Espaciado entre el logo y el título */
+}
+.barra-superior h1 {
+  font-size: 20px; /* Tamaño del título */
+  font-weight: bold; /* Negrita */
+  color: #8b0e13; /* Rojo oscuro */
+  margin: 0;
+  display: inline-block; /* Asegura que esté en línea con el logo */
+}
+
+/* Estilo para los módulos */
+.tab-content {
+  padding: 20px;
+  background-color: #ffffff; /* Fondo blanco */
+  border-radius: 8px; /* Bordes redondeados */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Sombra ligera */
+  margin-top: 20px; /* Espaciado */
+}
+
+/* Botones (similar a las pestañas de la barra de navegación) */
+.btn, select, .form-control {
+  color: #333333; /* Texto gris oscuro */
+  font-weight: bold;
+  font-size: 14px;
+  padding: 10px 15px;
+  background-color: #ffffff; /* Fondo blanco */
+  border: 1px solid #dddddd; /* Borde gris tenue */
+  border-radius: 4px; /* Bordes redondeados */
+  text-transform: none; /* Sin mayúsculas */
+  box-shadow: none;
+  cursor: pointer;
+  text-align: center; /* Alinear texto al centro */
+}
+.btn:hover, select:hover, .form-control:focus {
+  background-color: #f7f7f7; /* Fondo gris claro en hover */
+  border-color: #8b0e13; /* Borde rojo oscuro en hover */
+  color: #8b0e13; /* Texto rojo oscuro en hover */
+}
+
+/* Botón activo */
+.btn.active, select.active, .form-control.active {
+  background-color: #e9e9e9; /* Fondo gris más claro */
+  border-color: #8b0e13; /* Borde rojo oscuro */
+  color: #8b0e13; /* Texto rojo oscuro */
+}
+
+/* Checkboxes */
+input[type="checkbox"] + label {
+  color: #333333; /* Texto gris oscuro */
+  font-weight: bold;
+  cursor: pointer;
+}
+input[type="checkbox"]:checked + label {
+  color: #8b0e13; /* Texto rojo oscuro al seleccionar */
+}
+input[type="checkbox"] {
+  accent-color: #8b0e13; /* Color del checkbox */
+}
+
+/* Botón "Upload Complete" */
+.progress-bar {
+  background-color: #8b0e13 !important; /* Fondo rojo oscuro */
+  color: #ffffff !important; /* Texto blanco */
+  font-weight: bold; /* Texto en negrita */
+  border-radius: 4px; /* Bordes redondeados */
+  text-align: center; /* Centrar el texto */
+}
+
+/* General para las pestañas */
+.nav-pills > li > a {
+  color: #8b0e13; /* Texto rojo */
+  background-color: #f8f9fa; /* Fondo gris claro */
+  border-radius: 4px;
+  border: 1px solid #ddd; /* Borde sutil */
+  text-align: center; /* Opcional: centrar texto */
+}
+
+/* Pestaña activa */
+.nav-pills > li.active > a,
+.nav-pills > li.active > a:focus,
+.nav-pills > li.active > a:hover {
+  color: white; /* Texto blanco */
+  background-color: #8b0e13; /* Fondo rojo */
+  border-color: #8b0e13; /* Borde rojo */
+}
+
+/* Hover para pestañas inactivas */
+.nav-pills > li > a:hover {
+  background-color: #a60f17; /* Rojo más oscuro */
+  color: white; /* Texto blanco al pasar el mouse */
+}
+
+/* Opcional: eliminar sombra azul en focus */
+.nav-pills > li > a:focus {
+  outline: none;
+}
+
+/* Fondo y texto del selector */
+.selectize-control.single {
+  color: #8b0e13; /* Texto rojo */
+  background-color: #f8f9fa; /* Fondo gris claro */
+  border: 1px solid #ddd; /* Borde sutil */
+  border-radius: 4px;
+}
+
+/* Hover del selector */
+.selectize-control.single:hover {
+  background-color: #e9ecef; /* Gris más claro al pasar el mouse */
+}
+
+/* Elemento seleccionado */
+.selectize-control.single .selectize-input {
+  color: white; /* Texto blanco */
+  background-color: #8b0e13; /* Fondo rojo */
+  border-radius: 4px;
+}
+
+/* Opciones del menú desplegable */
+.selectize-dropdown-content .option {
+  color: #8b0e13; /* Texto rojo */
+  background-color: #f8f9fa; /* Fondo gris claro */
+}
+
+/* Hover en opciones del menú */
+.selectize-dropdown-content .option:hover {
+  background-color: #a60f17; /* Rojo más oscuro */
+  color: white; /* Texto blanco */
+}
+
+/* Fondo del menú desplegable */
+.selectize-dropdown {
+  background-color: #f8f9fa; /* Fondo gris claro */
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+
+
+
+

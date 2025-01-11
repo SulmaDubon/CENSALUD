@@ -16,7 +16,7 @@ librerias_necesarias <- c(
   "fs", "tidyr", "FactoMineR", "DescTools", "readxl", 
   "leaflet", "purrr", "flextable", "writexl", "kableExtra",
   "knitr", "rmarkdown", "broom", "webshot", "tools", 
-  "renv", "tidyverse"
+  "renv", "tidyverse", "bslib", "DT"
 )
 
 
@@ -24,4 +24,10 @@ librerias_necesarias <- c(
 instalar_cargar_librerias(librerias_necesarias)
 
 install.packages("terra")
+
+if (!webshot::is_phantomjs_installed()) {
+  webshot::install_phantomjs()
+}
+
+install.packages("webshot")
 
