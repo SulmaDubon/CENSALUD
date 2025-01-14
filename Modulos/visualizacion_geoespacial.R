@@ -2,11 +2,9 @@
 source("Modulos/Funciones/funciones_geoespaciales.R")
 
 # Cargar submódulos
-source("Modulos/Funciones/funciones_geoespaciales.R")
 source("Modulos/analisis_geoespacial.R")
 source("Modulos/analisis_especies.R")
 source("Modulos/graficos_geo.R")
-source("Modulos/vden.R")
 
 
 
@@ -22,7 +20,6 @@ visualizacionGeoespacialUI <- function(id) {
       tabPanel("Análisis Geoespacial", analisisGeoespacialUI(ns("analisis_geoespacial_ui"))),
       tabPanel("Especies", analisisEspeciesUI(ns("analisis_especies_ui"))),
       tabPanel("Gráficos de Dispersión", graficosGeoUI(ns("graficos_geo_ui"))),
-      tabPanel("Visualización DENV", vdenUI(ns("vden_ui"))),
       widths = c(3, 9)
     )
   )
@@ -55,30 +52,19 @@ visualizacionGeoespacial <- function(input, output, session, datos_completos, ca
   callModule(
     analisisGeoespacial,
     "analisis_geoespacial_ui",
-    datos_relevantes = datos_relevantes,  
-    carpeta_informe = carpeta_informe
+    datos_relevantes = datos_relevantes
   )
   
   callModule(
     analisisEspecies,
     "analisis_especies_ui",
-    datos_relevantes = datos_relevantes,
-    carpeta_informe = carpeta_informe
+    datos_relevantes = datos_relevantes
   )
 
   callModule(
     graficosGeo,
     "graficos_geo_ui",
-    datos_relevantes = datos_relevantes, 
-    carpeta_informe = carpeta_informe
+    datos_relevantes = datos_relevantes
   )
-  
-  callModule(
-    vden,
-    "vden_ui",
-    datos_relevantes = datos_relevantes,
-    carpeta_informe = carpeta_informe
-  )
-  
   
 }

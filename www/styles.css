@@ -3,7 +3,7 @@
 body {
   background-color: #f0f0f0; /* Fondo claro */
   font-family: 'Roboto', sans-serif;
-  padding-top: 80px; /* Espacio para la barra fija */
+  padding-top: 60px; /* Espacio para la barra fija */
 }
 
 /* Barra superior */
@@ -22,7 +22,7 @@ body {
 }
 .barra-superior img {
   height: 40px; /* Logo más estrecho */
-  margin-right: 10px; /* Espaciado entre el logo y el título */
+  margin-right: 20px; /* Espaciado entre el logo y el título */
 }
 .barra-superior h1 {
   font-size: 20px; /* Tamaño del título */

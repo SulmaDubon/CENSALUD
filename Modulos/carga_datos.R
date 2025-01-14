@@ -42,6 +42,20 @@ cargaDatos <- function(input, output, session, datos_completos, carpeta_informe,
     }
   })
   
+  observeEvent(input$eliminar_informe, {
+    carpeta <- carpeta_informe()
+    if (!is.null(carpeta) && eliminarCarpeta(carpeta)) {
+      carpeta_informe(NULL)
+      output$mensaje <- renderText({
+        paste("Carpeta eliminada. Carpeta:", carpeta)
+      })
+    } else {
+      output$mensaje <- renderText({
+        "No hay carpeta para eliminar."
+      })
+    }
+  })
+  
   observeEvent(input$archivo, {
     req(input$archivo)
     

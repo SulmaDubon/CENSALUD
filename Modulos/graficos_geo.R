@@ -1,4 +1,3 @@
-
 graficosGeoUI <- function(id) {
   ns <- NS(id)
   tagList(
@@ -21,17 +20,13 @@ graficosGeoUI <- function(id) {
     ),
     fluidRow(
       column(12, uiOutput(ns("leyenda_municipios")))  # Usar la leyenda generada por tu función
-    ),
-    fluidRow(
-      column(12, actionButton(ns("guardar_grafico"), "Guardar Gráfico"))
     )
-    
   )
 }
 
 
 
-graficosGeo <- function(input, output, session, datos_relevantes, carpeta_informe) {
+graficosGeo <- function(input, output, session, datos_relevantes) {
   ns <- session$ns
   
   # Definir leyendas localmente
@@ -49,8 +44,7 @@ graficosGeo <- function(input, output, session, datos_relevantes, carpeta_inform
     DENV_1 = "Presencia de DENV1", 
     DENV_2 = "Presencia de DENV2",
     DENV_3 = "Presencia de DENV3",
-    DENV_4 = "PResencia de DENV4"
-    
+    DENV_4 = "Presencia de DENV4"
   )
   
   # UI para el selector de municipios
@@ -113,75 +107,13 @@ graficosGeo <- function(input, output, session, datos_relevantes, carpeta_inform
   output$grafico_dispersion <- renderPlotly({
     plotly::config(
       grafico_actual(),
-      displaylogo = FALSE,
-      modeBarButtonsToRemove = c(
-        "lasso2d", "select2d", "hoverClosestCartesian", "hoverCompareCartesian",
-        "toggleSpikelines", "toImage"
-      ),
-      modeBarButtonsToAdd = c("zoom2d", "pan2d", "autoScale2d", "resetScale2d")
+      displaylogo = TRUE,  # Mostrar el logo y todas las opciones por defecto
+      modeBarButtonsToRemove = c("lasso2d", "select2d"),  # Opcional: Eliminar botones que no necesitas
+      modeBarButtonsToAdd = c("zoom2d", "pan2d", "resetScale2d")  # Botones útiles
     )
   })
-  
-  # Guardar el gráfico cuando se presiona el botón
-  observeEvent(input$guardar_grafico, {
-    req(datos_relevantes(), input$variable_seleccionada, carpeta_informe())
-    
-    # Validar que la carpeta base existe
-    if (is.null(carpeta_informe()) || !dir.exists(carpeta_informe())) {
-      showNotification(
-        "La carpeta no existe. Cree una carpeta desde el módulo Carga de Datos antes de guardar.",
-        type = "error"
-      )
-      return()
-    }
-    
-    # Crear subcarpeta para gráficos de dispersión
-    subcarpeta <- file.path(carpeta_informe(), "graficos_dispersion")
-    if (!dir.exists(subcarpeta)) {
-      dir.create(subcarpeta)
-    }
-    
-    # Generar un nombre único para el archivo
-    nombre_base <- generar_nombre_unico(
-      variable_leyenda = variables_leyendas[[input$variable_seleccionada]],
-      municipios = input$municipios_filtro
-    )
-    
-    # Normalizar el nombre del archivo
-    nombre_base <- gsub("[^[:alnum:]_]", "_", nombre_base)  # Reemplazar caracteres especiales por "_"
-    
-    # Agregar un contador si el nombre ya existe
-    contador <- 1
-    archivo_html <- file.path(subcarpeta, paste0(nombre_base, ".html"))
-    archivo_png <- file.path(subcarpeta, paste0(nombre_base, ".png"))
-    while (file.exists(archivo_html) || file.exists(archivo_png)) {
-      contador <- contador + 1
-      archivo_html <- file.path(subcarpeta, paste0(nombre_base, "_", contador, ".html"))
-      archivo_png <- file.path(subcarpeta, paste0(nombre_base, "_", contador, ".png"))
-    }
-    
-    # Guardar el gráfico como HTML
-    tryCatch({
-      htmlwidgets::saveWidget(grafico_actual(), archivo_html, selfcontained = TRUE)
-      
-      # Guardar el gráfico como PNG con webshot
-      if (!webshot::is_phantomjs_installed()) {
-        webshot::install_phantomjs()
-      }
-      webshot::webshot(archivo_html, file = archivo_png)
-      
-      # Notificar éxito
-      showNotification(paste("Gráfico guardado correctamente como:", basename(archivo_html)), type = "message")
-    }, error = function(e) {
-      # Notificar error
-      showNotification(
-        "Error al guardar el gráfico. Verifique que PhantomJS está instalado correctamente.",
-        type = "error"
-      )
-    })
-  })
-  
 }
+
 
 
 

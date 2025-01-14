@@ -21,7 +21,9 @@ analisisDescriptivoUI <- function(id) {
                "Tipo de Gráfico:",
                choices = c("Barras Agrupadas", "Barras Apiladas"),
                selected = "Barras Agrupadas"
-             )
+             ),
+             actionButton(ns("guardar_tabla"), "Guardar Tabla (Excel)"),
+             actionButton(ns("guardar_grafico"), "Guardar Gráfico (PNG)")
       ),
       column(8,
              uiOutput(ns("checkbox_variables"))
@@ -137,6 +139,24 @@ analisisDescriptivo <- function(input, output, session, datos_completos, carpeta
     )
   })
   
+  # Descargar la tabla en formato Excel
+  output$descargar_tabla <- downloadHandler(
+    filename = function() {
+      paste("tabla_resumen_", Sys.Date(), ".xlsx", sep = "")
+    },
+    content = function(file) {
+      datos <- datos_filtrados()
+      req(datos)
+      
+      tabla <- datos %>%
+        group_by(Variable, Respuesta) %>%
+        summarise(Conteo = n(), .groups = "drop") %>%
+        mutate(Porcentaje_Total = round((Conteo / nrow(datos_completos())) * 100, 1))
+      
+      writexl::write_xlsx(tabla, file)
+    }
+  )
+  
   # Generar gráfico
   output$grafico_resumen <- renderPlot({
     datos <- datos_filtrados()
@@ -218,7 +238,56 @@ analisisDescriptivo <- function(input, output, session, datos_completos, carpeta
         theme(axis.text.x = element_text(angle = 45, hjust = 1))
     }
   })
+  
+  # Descargar el gráfico en formato PNG
+  output$descargar_grafico <- downloadHandler(
+    filename = function() {
+      paste("grafico_resumen_", Sys.Date(), ".png", sep = "")
+    },
+    content = function(file) {
+      datos <- datos_filtrados()
+      req(datos)
+      
+      tipo_grafico <- input$tipo_grafico
+      
+      # Generar el gráfico según el tipo
+      g <- if (tipo_grafico == "Barras Apiladas") {
+        # Gráfico de barras apiladas
+        datos_grafico_apilado <- datos %>%
+          group_by(Variable, Respuesta, Municipio) %>%
+          summarise(Conteo = n(), .groups = "drop")
+        
+        ggplot(datos_grafico_apilado, aes(x = Municipio, y = Conteo, fill = as.factor(Respuesta))) +
+          geom_bar(stat = "identity", position = "stack") +
+          labs(
+            title = "Gráfico de Barras Apiladas",
+            x = "Municipio",
+            y = "Conteo",
+            fill = "Respuesta"
+          ) +
+          theme_minimal()
+      } else {
+        # Gráfico de barras agrupadas
+        datos_grafico_agrupado <- datos %>%
+          group_by(Variable, Respuesta) %>%
+          summarise(Conteo = n(), .groups = "drop")
+        
+        ggplot(datos_grafico_agrupado, aes(x = as.factor(Respuesta), y = Conteo, fill = Variable)) +
+          geom_bar(stat = "identity", position = position_dodge(width = 0.9)) +
+          labs(
+            title = "Gráfico de Barras Agrupadas",
+            x = "Respuesta",
+            y = "Conteo",
+            fill = "Variable"
+          ) +
+          theme_minimal()
+      }
+      
+      ggsave(file, plot = g, device = "png", width = 12, height = 8)
+    }
+  )
 }
+
 
 
 

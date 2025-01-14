@@ -5,9 +5,8 @@ source("Modulos/carga_datos.R")
 source("Modulos/visualizacion_geoespacial.R")
 source("Modulos/analisis_descriptivo.R")
 source("Modulos/inferencia_estadistica.R")
-source("Modulos/regresion_modelos.R")
-source("Modulos/analisis_multivariante.R")
-
+source("Modulos/tendencia.R")
+source("Modulos/modelado.R")
 
 categorias <- list(
   Conocimiento = c("CncTrans", "CncSint", "CncCont", "FamDiag", "DiagDengue", "DiagZika", 
@@ -26,7 +25,7 @@ categorias <- list(
   Recolecta = c("ZancViv", "LarvViv", "RecBrl", "RecCub", "RecPila", "RecMct", "RecLlnts", 
                 "RecOtros", "RecNing", "H_Aeg", "M_Aeg", "H_albo", "M_albo"),
   VDEN = c("DENV_1", "DENV_2", "DENV_3", "DENV_4")
-  )
+)
 
 ui <- fluidPage(
   tags$head(
@@ -43,6 +42,8 @@ ui <- fluidPage(
   # Contenido y navegación
   navbarPage(
     title = NULL,
+    
+    # --- Pestaña INICIO ---
     tabPanel("Inicio",
              fluidRow(
                column(
@@ -65,31 +66,60 @@ ui <- fluidPage(
                    tags$h3("Diagnóstico y Serotipificación Molecular de Virus del Dengue (VDEN)"),
                    tags$p(
                      "Este proyecto surge en el 2024 como respuesta a la creciente prevalencia del dengue, 
-        la infección arboviral más común en la región, convirtiéndose en prioridad para la salud pública. 
-        El objetivo principal de este proyecto es estudiar los serotipos circulantes del virus del dengue (VDEN) 
-        a través de la vigilancia de vectores, proporcionando datos clave para el diseño de políticas de salud pública 
-        más efectivas y basadas en evidencia. Además, busca fortalecer la capacidad local para gestionar y controlar futuros brotes, 
-        protegiendo a la población y disminuyendo la carga sanitaria y económica asociada a esta enfermedad."
+               la infección arboviral más común en la región, convirtiéndose en prioridad para la salud pública. 
+               El objetivo principal de este proyecto es estudiar los serotipos circulantes del virus del dengue (VDEN) 
+               a través de la vigilancia de vectores, proporcionando datos clave para el diseño de políticas de salud pública 
+               más efectivas y basadas en evidencia. Además, busca fortalecer la capacidad local para gestionar y controlar futuros brotes, 
+               protegiendo a la población y disminuyendo la carga sanitaria y económica asociada a esta enfermedad."
                    )
+                 )
+               )
+             ),
+             
+             # Botones "Manual" y "Variables" al final de la pestaña Inicio
+             fluidRow(
+               column(
+                 width = 12,
+                 tags$div(
+                   style = "text-align: center; margin-top: 30px;",
+                   actionButton("manual", "Manual de Usuario", style = "margin-right: 20px;"),
+                   actionButton("info_variables", "Información de Variables")
                  )
                )
              )
     ),
+    
+    # --- Otras pestañas ---
     tabPanel("Datos", cargaDatosUI("carga_datos_ui")),
     tabPanel("Geoespacial", visualizacionGeoespacialUI("visualizacion_geoespacial_ui")),
     tabPanel("Descriptivo", analisisDescriptivoUI("analisis_descriptivo_ui")),
     tabPanel("Inferencia", inferenciaEstadisticaUI("inferencia_estadistica_ui")),
-    tabPanel("Regresión", regresionModelosUI("regresion_modelos_ui")),
-    tabPanel("Multivariante", analisisMultivarianteUI("analisis_multivariante_ui"))
+    tabPanel("Tendencia", mod_tendencias_ui("tendencias_ui")),
+    tabPanel("Modelado", modeladoUI("modelado_ui"))
+  ),
+  
+  # Barra fija con el texto de licencia
+  tags$div(
+    style = "
+      position: fixed; 
+      bottom: 0; 
+      left: 0; 
+      width: 100%; 
+      background-color: #f8f9fa; 
+      text-align: center; 
+      padding: 10px; 
+      font-size: 0.8em; 
+      color: #666; 
+      border-top: 1px solid #ccc;",
+    "Esta obra está bajo licencia CC BY-NC-SA 4.0. Para ver una copia de esta licencia, visite https://creativecommons.org/licenses/by-nc-sa/4.0/ © 2 por Sulma Dubon."
   )
 )
 
-
-
 # Lógica del servidor
 server <- function(input, output, session) {
+  
   datos_completos <- reactiveVal()
-  carpeta_informe <- reactiveVal()  # Variable reactiva para la carpeta del informe
+  carpeta_informe <- reactiveVal()  
   
   # Llamadas a los módulos
   callModule(
@@ -108,37 +138,68 @@ server <- function(input, output, session) {
   )
   
   callModule(
-   analisisDescriptivo,
+    analisisDescriptivo,
     "analisis_descriptivo_ui",
     datos_completos = datos_completos,
-    carpeta_informe = carpeta_informe,
     categorias = categorias
   )
   
-   
-   callModule(
-     inferenciaEstadistica,
-     "inferencia_estadistica_ui",
-     datos_completos = datos_completos,
-     carpeta_informe = carpeta_informe,
-     categorias = categorias
-   )
-  # 
-  # callModule(
-  #   regresionModelos,
-  #   "regresion_modelos_ui",
-  #   datos_completos = datos_completos,
-  #   listas_reactivas = listas_reactivas
-  # )
-  # 
-  # callModule(
-  #   analisisMultivariante,
-  #   "analisis_multivariante_ui",
-  #   datos_completos = datos_completos,
-  #   listas_reactivas = listas_reactivas
-  # )
+  callModule(
+    inferenciaEstadistica,
+    "inferencia_estadistica_ui",
+    datos_completos = datos_completos,
+    categorias = categorias
+  )
+  
+  callModule(
+    mod_tendencias_server,
+    "tendencias_ui",
+    datos_completos = datos_completos,
+    
+  )
+  
+  callModule(
+    modelado,
+    "modelado_ui", 
+    datos = datos_completos,
+    categorias = categorias  
+  )
+  
+  # Acción para abrir el PDF del manual de usuario en un modal
+  observeEvent(input$manual, {
+    showModal(
+      modalDialog(
+        title = "Manual de Usuario",
+        tags$iframe(
+          src = "manual.html",
+          width = "100%",
+          height = "600px",
+          style = "border:none;"
+        ),
+        easyClose = TRUE,
+        size = "l"
+      )
+    )
+  })
+  
+  # Acción para abrir el diccionario de variables (HTML) en un modal
+  observeEvent(input$info_variables, {
+    showModal(
+      modalDialog(
+        title = "Información de Variables",
+        tags$iframe(
+          src = "variables.html",
+          width = "100%",
+          height = "600px",
+          style = "border:none;"
+        ),
+        easyClose = TRUE,
+        size = "l"
+      )
+    )
+  })
 }
 
-# Ejecutar la aplicación Shiny
 shinyApp(ui = ui, server = server)
+
 

@@ -51,10 +51,23 @@ crear_datos_relevantes <- function(datos) {
   datos <- datos %>%
     limpiar_coordenadas(c("Coor_Lat", "Coor_Long")) %>%
     mutate(
-      Coor_Long = if_else(Coor_Long > 0, -Coor_Long, Coor_Long),
-      fam_entrev = 1
-    ) %>%
-    select(all_of(columnas_requeridas), fam_entrev)
+      Coor_Long = if_else(Coor_Long > 0, -Coor_Long, Coor_Long), # Ajustar coordenadas
+      fam_entrev = 1 # Crear columna fam_entrev con valor constante
+    )
+  
+  # Verificar columnas requeridas presentes
+  columnas_presentes <- intersect(columnas_requeridas, colnames(datos))
+  
+  if (length(columnas_presentes) == 0) {
+    stop("No se encontraron columnas requeridas en los datos.")
+  }
+  
+  # Crear una lista final de columnas para selección
+  columnas_finales <- c(columnas_presentes, "fam_entrev")
+  
+  # Seleccionar columnas usando dplyr::select
+  datos <- datos %>%
+    dplyr::select(all_of(columnas_finales))
   
   print("Columnas después de procesar:")
   print(names(datos))
@@ -119,7 +132,7 @@ generar_nombre_unico <- function(variable_leyenda, municipios) {
 #------------------------------------------------
 # Funcion leyendas personalizadas mapas especies
 #-------------------------------------------------
-addLegendCustom <- function(map, variables_seleccionadas) {
+addLegendCustom <- function(map, variables_seleccionadas, colores_denv) {
   # Generar contenido de la leyenda basado en las variables seleccionadas
   legend_html <- paste0(
     "<div style='background-color: white; padding: 5px; border-radius: 5px; font-size: 12px;'>",
@@ -128,22 +141,40 @@ addLegendCustom <- function(map, variables_seleccionadas) {
       lapply(variables_seleccionadas, function(variable) {
         if (grepl("H_", variable)) {
           # Hembras: círculo con borde amarillo
+          color <- ifelse(variable == "H_Aeg", "red", "green")
           paste0(
             "<div style='display: flex; align-items: center; margin-bottom: 5px;'>",
-            "<div style='width: 15px; height: 15px; background-color: ",
-            ifelse(variable == "H_Aeg", "red", "green"),
+            "<div style='width: 15px; height: 15px; background-color: ", color,
             "; border: 2px solid yellow; border-radius: 50%; margin-right: 5px;'></div>",
             variable,
             "</div>"
           )
-        } else {
-          # Machos: triángulos
+        } else if (grepl("M_", variable)) {
+          # Machos: triángulos de diferentes colores
           color <- ifelse(variable == "M_Aeg", "red", "green")
           paste0(
             "<div style='display: flex; align-items: center; margin-bottom: 5px;'>",
             "<div style='width: 0; height: 0; border-left: 7px solid transparent; ",
             "border-right: 7px solid transparent; border-bottom: 14px solid ", color, "; ",
             "margin-right: 5px;'></div>",
+            variable,
+            "</div>"
+          )
+        } else if (grepl("DENV_", variable)) {
+          # Variables DENV: círculos de colores específicos
+          color <- colores_denv[[variable]]
+          paste0(
+            "<div style='display: flex; align-items: center; margin-bottom: 5px;'>",
+            "<div style='width: 15px; height: 15px; background-color: ", color,
+            "; border: 1px solid black; border-radius: 50%; margin-right: 5px;'></div>",
+            variable,
+            "</div>"
+          )
+        } else {
+          # Otras variables: ícono predeterminado
+          paste0(
+            "<div style='display: flex; align-items: center; margin-bottom: 5px;'>",
+            "<i class='fa fa-map-marker' style='font-size: 16px; color: red; margin-right: 5px;'></i>",
             variable,
             "</div>"
           )
@@ -154,6 +185,7 @@ addLegendCustom <- function(map, variables_seleccionadas) {
   )
   addControl(map, html = legend_html, position = "bottomright")
 }
+
 
 #-------------------------------------------------------
 # Funcion para añadir leyenda municipio a mapas especie
@@ -173,9 +205,18 @@ addMunicipiosLegend <- function(map, municipios_seleccionados) {
 # Funcion para generar mapas para especie
 #-------------------------------------------------
 generar_mapa_especies <- function(datos, variables_especies, municipios_seleccionados, variables_leyendas, crear_icono) {
+  # Definir colores consistentes para DENV
+  colores_denv <- list(
+    DENV_1 = "blue",   # Azul
+    DENV_2 = "purple", # Morado
+    DENV_3 = "orange", # Naranja
+    DENV_4 = "brown"   # Marrón
+  )
+  
   mapa <- leaflet() %>% addTiles()
   
   for (variable in variables_especies) {
+    # Filtrar datos para la variable actual
     datos_variable <- datos %>%
       filter(!is.na(.data[[variable]]) & .data[[variable]] == 1 & Municipio %in% municipios_seleccionados)
     
@@ -184,25 +225,16 @@ generar_mapa_especies <- function(datos, variables_especies, municipios_seleccio
       next
     }
     
-    if (variable %in% c("H_Aeg", "H_albo", "DENV_1", "DENV_2", "DENV_3", "DENV_4")) {
-      # Hembras y DENV variables: círculos de colores diferentes
-      color <- switch(
-        variable,
-        "H_Aeg" = "yellow",
-        "H_albo" = "green",
-        "DENV_1" = "blue",
-        "DENV_2" = "purple",
-        "DENV_3" = "orange",
-        "DENV_4" = "pink"
-      )
+    if (grepl("H_", variable)) {
+      # Graficar Hembras como círculos con borde amarillo
       mapa <- mapa %>%
         addCircleMarkers(
           lng = datos_variable$Coor_Long,
           lat = datos_variable$Coor_Lat,
-          color = "black",  # Borde negro
-          fillColor = color,
+          color = "yellow",  # Borde amarillo
+          fillColor = if_else(variable == "H_Aeg", "red", "green"),
           fillOpacity = 0.6,
-          radius = 8,
+          radius = 6,  # Tamaño reducido
           stroke = TRUE,
           weight = 2,
           group = variable,
@@ -211,8 +243,27 @@ generar_mapa_especies <- function(datos, variables_especies, municipios_seleccio
             "<br><strong>Municipio:</strong>", datos_variable$Municipio
           )
         )
+    } else if (grepl("DENV_", variable)) {
+      # Graficar VDen (DENV) como círculos de colores sólidos
+      color <- colores_denv[[variable]]
+      mapa <- mapa %>%
+        addCircleMarkers(
+          lng = datos_variable$Coor_Long,
+          lat = datos_variable$Coor_Lat,
+          color = "black",  # Borde negro
+          fillColor = color,
+          fillOpacity = 0.8,
+          radius = 6,  # Tamaño reducido
+          stroke = TRUE,
+          weight = 1.5,
+          group = variable,
+          popup = paste(
+            "<strong>Variable:</strong>", variables_leyendas[[variable]],
+            "<br><strong>Municipio:</strong>", datos_variable$Municipio
+          )
+        )
     } else {
-      # Machos: triángulos
+      # Graficar otras variables como marcadores con íconos personalizados
       icono <- crear_icono(variable)
       mapa <- mapa %>%
         addMarkers(
@@ -228,11 +279,10 @@ generar_mapa_especies <- function(datos, variables_especies, municipios_seleccio
     }
   }
   
-  # Agregar leyendas
-  mapa <- addLegendCustom(mapa, variables_especies)
-  mapa <- addMunicipiosLegend(mapa, municipios_seleccionados)
-  
-  return(mapa)
+  # Agregar leyendas personalizadas y retorno del mapa
+  mapa %>%
+    addLegendCustom(variables_especies, colores_denv) %>%
+    addMunicipiosLegend(municipios_seleccionados)
 }
 
   
