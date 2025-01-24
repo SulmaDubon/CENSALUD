@@ -1,0 +1,123 @@
+---
+title: "Manual de Instalación"
+subtitle: "plataforma bioinformatica para el monitoreo del virus del Dengue en comunidades vulnerables de San Salvador usando R y Shiny."
+format: html
+---
+# Requisitos Previos
+
+- **Sistema Operativo:** Windows, macOS o Linux.
+- **Software necesario:**
+  - **R:** Versión 4.4.0 o superior ([descargar aquí](https://cran.r-project.org/)).
+  - **RStudio:** Versión actualizada ([descargar aquí](https://posit.co/downloads/)).
+- **Dependencias adicionales:** Asegúrate de instalar los siguientes paquetes en R:
+
+```r
+install.packages(c("htmlwidgets", "shiny", "ggplot2", "plotly", 
+  "fs", "tidyr", "FactoMineR", "DescTools", "readxl", 
+  "leaflet", "purrr", "flextable", "writexl", "kableExtra",
+  "knitr", "rmarkdown", "broom", "webshot", "tools", 
+  "renv", "tidyverse", "bslib", "DT", "lubridate", "terra", 
+  "MASS", "dplyr"))
+```
+
+### **Dependencias adicionales para macOS y Linux:**
+Algunos paquetes requieren bibliotecas del sistema:
+
+1. **`terra`:**
+   - **macOS:** Instalar usando Homebrew:
+     ```bash
+     brew install gdal proj geos
+     ```
+   - **Linux:** Instalar usando el administrador de paquetes (ejemplo en Ubuntu):
+     ```bash
+     sudo apt-get install libgdal-dev libproj-dev libgeos-dev
+     ```
+
+2. **`webshot`:**
+   - Requiere PhantomJS para capturas de pantalla. Instálalo con:
+     ```r
+     webshot::install_phantomjs()
+     ```
+
+3. **Gráficos (`leaflet`, `ggplot2`):**
+   - **Linux:** Asegúrate de tener instalada la biblioteca `libfontconfig`:
+     ```bash
+     sudo apt-get install libfontconfig
+     ```
+
+# Configuración Inicial
+
+1. Descarga todo el proyecto desde el repositorio o carpeta compartida:
+
+[Repositorio CENSALUD en GitHub](https://github.com/SulmaDubon/CENSALUD)
+
+2. Asegúrate de que el archivo `CENSALUD.Rproj` esté presente en el directorio raíz.
+
+# Organización de Archivos
+
+Tu proyecto debe estar organizado de la siguiente manera:
+
+```plaintext
+.
+├── app.R
+├── CENSALUD.Rproj
+├── Modulos/
+│   ├── analisis_descriptivo.R
+│   ├── analisis_especies.R
+│   ├── analisis_geoespacial.R
+│   ├── graficos_geo.R
+│   ├── inferencia_estadistica.R
+│   ├── carga_datos.R
+│   ├── visualizacion_geoespacial.R
+│   ├── tendencia.R
+│   ├── modelado.R
+│   └── Funciones/
+│       ├── diccionario_respuestas.R
+│       ├── funciones_analisisdescriptivo.R
+│       ├── funciones_generales.R
+│       ├── funciones_cargadatos.R
+│       └── funciones_geoespaciales.R
+├── www/
+│   ├── Barra.png
+│   ├── iconos/
+│   │   ├── triangulo_rojo.png
+│   │   ├── triangulo_verde.png
+│   ├── imagen_principal.jpg
+│   ├── munual.pdf
+│   ├── styles.css
+│   ├── variables.html
+│   └── variables_files/
+└── renv.lock
+```
+
+# Uso de `renv` para Dependencias
+
+Si utilizas `renv` para gestionar dependencias:
+
+1. Restaura el entorno ejecutando:
+
+```r
+renv::restore()
+```
+
+2. Si añades nuevos paquetes, actualiza el entorno con:
+
+```r
+renv::snapshot()
+```
+
+# Ejecución de la Aplicación
+
+1. Abre `app.R` en RStudio.
+2. Ejecuta la aplicación usando el botón `Run App` o con:
+
+```r
+shiny::runApp()
+```
+
+# Solución de Problemas
+
+- **Error al cargar paquetes:** Instala paquetes manualmente como se indica en la sección "Requisitos Previos".
+- **Estructura de archivos incompleta:** Verifica que todas las carpetas y archivos indicados estén en su lugar.
+- **Errores al ejecutar:** Revisa los mensajes de error en la consola para identificar problemas específicos.
+

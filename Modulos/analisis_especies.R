@@ -83,7 +83,7 @@ analisisEspecies <- function(input, output, session, datos_relevantes) {
       ns("municipios_filtro"),
       "Seleccione Municipios:",
       choices = municipios,
-      selected = municipios # Todos seleccionados por defecto
+      selected = municipios[1] # Todos seleccionados por defecto
     )
   })
   

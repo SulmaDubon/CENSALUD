@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Sulma Dubon">
+
+<title>Información de Variables</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="variables_files/libs/clipboard/clipboard.min.js"></script>
+<script src="variables_files/libs/quarto-html/quarto.js"></script>
+<script src="variables_files/libs/quarto-html/popper.min.js"></script>
+<script src="variables_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="variables_files/libs/quarto-html/anchor.min.js"></script>
+<link href="variables_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="variables_files/libs/quarto-html/quarto-syntax-highlighting-2486e1f0a3ee9ee1fc393803a1361cdb.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="variables_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="variables_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="variables_files/libs/bootstrap/bootstrap-5bdc1ec511977dd36301403cf8f4f68d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Información de Variables</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Sulma Dubon </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="cómo-usar-este-documento" class="level2">
+<h2 class="anchored" data-anchor-id="cómo-usar-este-documento">Cómo usar este documento</h2>
+<ul>
+<li><p>Revisa la lista de variables y sus definiciones.</p></li>
+<li><p>Utiliza esta información como referencia al realizar análisis estadísticos o consultas específicas.</p></li>
+<li><p>Asegura que, antes de recolectar datos, tengas claro el significado de cada variable y su rango de valores.</p></li>
+</ul>
+<p>Este documento describe la información de las variables utilizadas en el proyecto de monitoreo del Dengue.</p>
+</section>
+<section id="diccionario-de-variables" class="level2">
+<h2 class="anchored" data-anchor-id="diccionario-de-variables">Diccionario de Variables</h2>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Diccionario de Variables</caption>
+<colgroup>
+<col style="width: 10%">
+<col style="width: 8%">
+<col style="width: 46%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Categoria</th>
+<th style="text-align: left;">Variable</th>
+<th style="text-align: left;">Descripcion</th>
+<th style="text-align: left;">Tipo_de_Variable</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Datos</td>
+<td style="text-align: left;">ID</td>
+<td style="text-align: left;">Codigo vivienda</td>
+<td style="text-align: left;">carácter</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Datos</td>
+<td style="text-align: left;">Fecha</td>
+<td style="text-align: left;">Fecha encuesta</td>
+<td style="text-align: left;">fecha</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Datos</td>
+<td style="text-align: left;">Municipio</td>
+<td style="text-align: left;">Municipio donde se realiza</td>
+<td style="text-align: left;">carácter</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Coordenadas</td>
+<td style="text-align: left;">Coor_Lat</td>
+<td style="text-align: left;">Coordenada latitud</td>
+<td style="text-align: left;">Coordenas DMS</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Coordenadas</td>
+<td style="text-align: left;">Coor_Long</td>
+<td style="text-align: left;">Coordenada longitud</td>
+<td style="text-align: left;">Coordenas DMS</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Conocimiento</td>
+<td style="text-align: left;">CncTrans</td>
+<td style="text-align: left;">Conocimiento sobre la transmisión del dengue</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Conocimiento</td>
+<td style="text-align: left;">CncSint</td>
+<td style="text-align: left;">Conocimiento sobre síntomas del dengue</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Conocimiento</td>
+<td style="text-align: left;">CncCont</td>
+<td style="text-align: left;">Conocimiento sobre control de poblaciones de zancudos</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Conocimiento</td>
+<td style="text-align: left;">FamDiag</td>
+<td style="text-align: left;">Diagnóstico previo de dengue, zika o chikungunya en la familia</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Conocimiento</td>
+<td style="text-align: left;">DiagDengue</td>
+<td style="text-align: left;">Diagnóstico de dengue</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Conocimiento</td>
+<td style="text-align: left;">DiagZika</td>
+<td style="text-align: left;">Diagnóstico de zika</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Conocimiento</td>
+<td style="text-align: left;">DiagChik</td>
+<td style="text-align: left;">Diagnóstico de chikungunya</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Conocimiento</td>
+<td style="text-align: left;">FamHosp</td>
+<td style="text-align: left;">Requerimiento de hospitalización (dengue, zika, chikungunya) en la familia</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Conocimiento</td>
+<td style="text-align: left;">HospDengue</td>
+<td style="text-align: left;">Hospitalización por dengue</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Conocimiento</td>
+<td style="text-align: left;">HospZika</td>
+<td style="text-align: left;">Hospitalización por zika</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Conocimiento</td>
+<td style="text-align: left;">HospChik</td>
+<td style="text-align: left;">Hospitalización por chikungunya</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Conocimiento</td>
+<td style="text-align: left;">MetDiag</td>
+<td style="text-align: left;">Método de diagnóstico del dengue</td>
+<td style="text-align: left;">Categórica (Prueba de lab=1, Sospecha clínica=2)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Conocimiento</td>
+<td style="text-align: left;">Caso_6m</td>
+<td style="text-align: left;">Caso de dengue en los últimos 6 meses</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Conocimiento</td>
+<td style="text-align: left;">AtenMed</td>
+<td style="text-align: left;">Atención médica por sospecha de dengue</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Conocimiento</td>
+<td style="text-align: left;">PruebLab</td>
+<td style="text-align: left;">Prueba de laboratorio por sospecha de dengue</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Conocimiento</td>
+<td style="text-align: left;">AutoMed</td>
+<td style="text-align: left;">Automedicación por sospecha de dengue</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Conocimiento</td>
+<td style="text-align: left;">MedNat</td>
+<td style="text-align: left;">Uso de medicina natural por sospecha de dengue</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Conocimiento</td>
+<td style="text-align: left;">BrotVec</td>
+<td style="text-align: left;">Brotes de dengue en el vecindario en los últimos 6 meses</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0, Desconoce=2)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Conocimiento</td>
+<td style="text-align: left;">MedVec</td>
+<td style="text-align: left;">Medidas tomadas en el vecindario ante brotes de dengue</td>
+<td style="text-align: left;">Categórica (Desconoce=1, Pasar consulta=2, Ninguna=3)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Practicas</td>
+<td style="text-align: left;">Mosq_uso</td>
+<td style="text-align: left;">Uso de mosquiteros sobre las camas</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Practicas</td>
+<td style="text-align: left;">Mosq_Insec</td>
+<td style="text-align: left;">Uso de mosquiteros impregnados con insecticida</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Practicas</td>
+<td style="text-align: left;">Mosq_Peri</td>
+<td style="text-align: left;">Período de uso de mosquiteros</td>
+<td style="text-align: left;">Categórica (Todo el año=1, Época de lluvia=2)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Practicas</td>
+<td style="text-align: left;">MosqAguj</td>
+<td style="text-align: left;">Mosquiteros poseen agujeros</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Practicas</td>
+<td style="text-align: left;">MsqFrcStd</td>
+<td style="text-align: left;">Frecuencia con que revisa el estado del mosquitero</td>
+<td style="text-align: left;">Categórica (Seguido=1, Rara vez=2, Nunca=3)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Practicas</td>
+<td style="text-align: left;">MosqTds</td>
+<td style="text-align: left;">Uso de mosquiteros en todos los grupos de edad</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Practicas</td>
+<td style="text-align: left;">MFN_5</td>
+<td style="text-align: left;">Número de familiares menores de 5 años</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Practicas</td>
+<td style="text-align: left;">MFN5_7</td>
+<td style="text-align: left;">Número de familiares entre 5 y 7 años</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Practicas</td>
+<td style="text-align: left;">MFA18_40</td>
+<td style="text-align: left;">Número de familiares entre 18 y 40 años</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Practicas</td>
+<td style="text-align: left;">MFA_40</td>
+<td style="text-align: left;">Número de familiares mayores de 40 años</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Practicas</td>
+<td style="text-align: left;">Malla_Uso</td>
+<td style="text-align: left;">Usa mallas en puertas y ventanas</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Practicas</td>
+<td style="text-align: left;">Repel_Uso</td>
+<td style="text-align: left;">Utiliza repelente contra picaduras de zancudos</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Practicas</td>
+<td style="text-align: left;">Charla</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Practicas</td>
+<td style="text-align: left;">Fum_Com</td>
+<td style="text-align: left;">Campañas de fumigación en su comunidad en los últimos 6 meses</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Practicas</td>
+<td style="text-align: left;">Fum_frec</td>
+<td style="text-align: left;">Frecuencia de campañas de fumigación en los últimos 6 meses</td>
+<td style="text-align: left;">Categórica (1-2 veces=1, 3-4 veces=2, &gt;4 veces=3)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Practicas</td>
+<td style="text-align: left;">Ult_Vis_A</td>
+<td style="text-align: left;">Última visita de autoridades de salud para fumigar su casa</td>
+<td style="text-align: left;">Categórica (1er tri=1, 2do tri=2, 3er tri=3)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Practicas</td>
+<td style="text-align: left;">Fum_Hogar</td>
+<td style="text-align: left;">Permitió que su hogar sea fumigado</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Practicas</td>
+<td style="text-align: left;">Fum_MotNo</td>
+<td style="text-align: left;">Motivo por el que no permitió fumigación</td>
+<td style="text-align: left;">Categórica (No estaba=1, Alergias=2)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Practicas</td>
+<td style="text-align: left;">Fum_Cree</td>
+<td style="text-align: left;">Considera efectivas las fumigaciones para reducir zancudos</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Practicas</td>
+<td style="text-align: left;">Frec_Limp_Dep</td>
+<td style="text-align: left;">Frecuencia de limpieza de depósitos de agua al mes</td>
+<td style="text-align: left;">Categórica (1 vez=1, 2 veces=2, 3 veces=3, &gt;4=4)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Practicas</td>
+<td style="text-align: left;">Abat_Uso</td>
+<td style="text-align: left;">Uso de abate en depósitos de agua</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Practicas</td>
+<td style="text-align: left;">Abat_tiemp</td>
+<td style="text-align: left;">Tiempo desde que se colocó abate</td>
+<td style="text-align: left;">Categórica (&lt;1 mes=1, ~2 meses=2, &gt;3 meses=3)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">A CONSIDERAR</td>
+<td style="text-align: left;">Inf_prev</td>
+<td style="text-align: left;">Recibir más información sobre cómo prevenir el dengue</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">A CONSIDERAR</td>
+<td style="text-align: left;">Inf_Foll</td>
+<td style="text-align: left;">Recibir información en folleto</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">A CONSIDERAR</td>
+<td style="text-align: left;">Inf_char</td>
+<td style="text-align: left;">Recibir información en charlas comunitarias</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">A CONSIDERAR</td>
+<td style="text-align: left;">Inf_tv_rad</td>
+<td style="text-align: left;">Recibir información en programas de TV/radio</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">A CONSIDERAR</td>
+<td style="text-align: left;">Inf_redsoc</td>
+<td style="text-align: left;">Recibir información por redes sociales</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">A CONSIDERAR</td>
+<td style="text-align: left;">inf_otro</td>
+<td style="text-align: left;">Recibir información por otros medios</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">A CONSIDERAR</td>
+<td style="text-align: left;">Resp_Soc</td>
+<td style="text-align: left;">Responsabilidad del control del dengue: la sociedad en general</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">A CONSIDERAR</td>
+<td style="text-align: left;">Resp_Alc</td>
+<td style="text-align: left;">Responsabilidad del control del dengue: Alcaldías</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">A CONSIDERAR</td>
+<td style="text-align: left;">Resp_MINSAL</td>
+<td style="text-align: left;">Responsabilidad del control del dengue: Ministerio de Salud</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">MMB. FAM</td>
+<td style="text-align: left;"><code>N &lt;5</code></td>
+<td style="text-align: left;">Niños menores de 5 años</td>
+<td style="text-align: left;">Numérico</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MMB. FAM</td>
+<td style="text-align: left;">N5-17</td>
+<td style="text-align: left;">Niños entre 5 y 17 años</td>
+<td style="text-align: left;">Numérico</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">MMB. FAM</td>
+<td style="text-align: left;">A18_40</td>
+<td style="text-align: left;">Adultos entre 18 y 40 años</td>
+<td style="text-align: left;">Numérico</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MMB. FAM</td>
+<td style="text-align: left;"><code>A &gt;40</code></td>
+<td style="text-align: left;">Adultos mayores de cuarenta</td>
+<td style="text-align: left;">Numérico</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">MMB. FAM</td>
+<td style="text-align: left;">Embar</td>
+<td style="text-align: left;">Mujeres embarazadas</td>
+<td style="text-align: left;">Numérico</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ESTRUCTURA</td>
+<td style="text-align: left;">ParedTipo</td>
+<td style="text-align: left;">Tipo de paredes de la vivienda</td>
+<td style="text-align: left;">Categórica (Adobe=1, Bloque=2, etc.)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ESTRUCTURA</td>
+<td style="text-align: left;">RepelloTipo</td>
+<td style="text-align: left;">Tipo de repello de la vivienda</td>
+<td style="text-align: left;">Categórica (Cemento=1, Lodo=2, Parcial=3, Sin=4)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ESTRUCTURA</td>
+<td style="text-align: left;">TechoTipo</td>
+<td style="text-align: left;">Tipo de techo de la vivienda</td>
+<td style="text-align: left;">Categórica (Palma=1, Paja=2, Lámina=3, etc.)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ESTRUCTURA</td>
+<td style="text-align: left;">Gote</td>
+<td style="text-align: left;">Presencia de goteras en el techo</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ESTRUCTURA</td>
+<td style="text-align: left;">SueloTipo</td>
+<td style="text-align: left;">Tipo de piso de la vivienda</td>
+<td style="text-align: left;">Categórica (Tierra=1, Cemento=2, Ladrillo=3, Otro=4)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ESTRUCTURA</td>
+<td style="text-align: left;">EstrucAdic</td>
+<td style="text-align: left;">Estructuras adicionales en la vivienda</td>
+<td style="text-align: left;">Categórica (Gallinero=1, Porqueriza=2, etc.)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">DISPOCISION AGUA</td>
+<td style="text-align: left;">AguaTipo</td>
+<td style="text-align: left;">Tipo de agua utilizada en casa</td>
+<td style="text-align: left;">Categórica (ANDA=1, Pozo=2, Río=3, etc.)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">DISPOCISION AGUA</td>
+<td style="text-align: left;">FrecRecAg</td>
+<td style="text-align: left;">Frecuencia de recolección de agua</td>
+<td style="text-align: left;">Categórica (1 vez=1, 2 veces=2, 3 o más=3)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">DISPOCISION AGUA</td>
+<td style="text-align: left;">AlmBarril</td>
+<td style="text-align: left;">Almacena en barriles</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">DISPOCISION AGUA</td>
+<td style="text-align: left;">AlmCub</td>
+<td style="text-align: left;">Almacena en cubetas</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">DISPOCISION AGUA</td>
+<td style="text-align: left;">AlmPila</td>
+<td style="text-align: left;">Almacena en pila</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">DISPOCISION AGUA</td>
+<td style="text-align: left;">AlmOtro</td>
+<td style="text-align: left;">Almacena en otro recipiente</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">DISPOCISION AGUA</td>
+<td style="text-align: left;">AlmNing</td>
+<td style="text-align: left;">No almacena agua</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">DISPOCISION AGUA</td>
+<td style="text-align: left;">CubTipo</td>
+<td style="text-align: left;">Tipo de cubierta en los recipientes de agua</td>
+<td style="text-align: left;">Categórica (Ninguno=1, Tapaderas=2, Plástico=3, etc.)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">RECOLECTA</td>
+<td style="text-align: left;">ZancViv</td>
+<td style="text-align: left;">Presencia de zancudos adultos en la vivienda</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">RECOLECTA</td>
+<td style="text-align: left;">LarvViv</td>
+<td style="text-align: left;">Presencia de larvas en la vivienda</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">RECOLECTA</td>
+<td style="text-align: left;">RecBrl</td>
+<td style="text-align: left;">Recolecta larvas en barril</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">RECOLECTA</td>
+<td style="text-align: left;">RecCub</td>
+<td style="text-align: left;">Recolecta larvas en cubetas</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">RECOLECTA</td>
+<td style="text-align: left;">RecPila</td>
+<td style="text-align: left;">Recolecta larvas en pila</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">RECOLECTA</td>
+<td style="text-align: left;">RecMct</td>
+<td style="text-align: left;">Recolecta larvas en macetas</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">RECOLECTA</td>
+<td style="text-align: left;">RecLlnts</td>
+<td style="text-align: left;">Recolecta larvas en llantas</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">RECOLECTA</td>
+<td style="text-align: left;">RecOtros</td>
+<td style="text-align: left;">Recolecta larvas en otros</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">RECOLECTA</td>
+<td style="text-align: left;">RecNing</td>
+<td style="text-align: left;">No se recolectan larvas en la vivienda</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">RECOLECTA</td>
+<td style="text-align: left;">H_Aeg</td>
+<td style="text-align: left;">Presencia de hembra Aedes aegypti en la vivienda</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">RECOLECTA</td>
+<td style="text-align: left;">M_Aeg</td>
+<td style="text-align: left;">Presencia de macho albopictus en la vivienda</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">RECOLECTA</td>
+<td style="text-align: left;">H_albo</td>
+<td style="text-align: left;">Presencia de hembra Aedes Albopictus</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">RECOLECTA</td>
+<td style="text-align: left;">M_albo</td>
+<td style="text-align: left;">Presencia de macho albopictus</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">VDEN</td>
+<td style="text-align: left;">DENV_1</td>
+<td style="text-align: left;">Presencia de DENV1</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">VDEN</td>
+<td style="text-align: left;">DENV_2</td>
+<td style="text-align: left;">Presencia de DENV2</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">VDEN</td>
+<td style="text-align: left;">DENV_3</td>
+<td style="text-align: left;">Presencia de DENV3</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">VDEN</td>
+<td style="text-align: left;">DENV_4</td>
+<td style="text-align: left;">Presencia de DENV4</td>
+<td style="text-align: left;">Categórica (Sí=1, No=0)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

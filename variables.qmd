@@ -1,0 +1,142 @@
+---
+title: "Información de Variables"
+author: "Sulma Dubon"
+output: pdf_document
+---
+
+## Cómo usar este documento
+
+-   Revisa la lista de variables y sus definiciones.
+
+-   Utiliza esta información como referencia al realizar análisis estadísticos o consultas específicas.
+
+-   Asegura que, antes de recolectar datos, tengas claro el significado de cada variable y su rango de valores.
+
+Este documento describe la información de las variables utilizadas en el proyecto de monitoreo del Dengue.
+
+## Diccionario de Variables
+
+```{r}
+#| include: false
+library(dplyr)
+library(knitr)
+library(tibble)
+```
+
+```{r}
+#| echo: false
+# Construimos la tabla con la información de tus variables
+df <- tribble(
+  ~Categoria,    ~Variable,         ~Descripcion,                                                                                ~Tipo_de_Variable,
+  
+  # Se cambian o se escapan "N <5" y "A >40" con backticks
+  "Datos",       "ID",              "Codigo vivienda",                                                                            "carácter",
+  "Datos",       "Fecha",           "Fecha encuesta",                                                                             "fecha",
+  "Datos",       "Municipio",       "Municipio donde se realiza",                                                                 "carácter",
+  
+  "Coordenadas", "Coor_Lat",        "Coordenada latitud",                                                                         "Coordenas DMS",
+  "Coordenadas", "Coor_Long",       "Coordenada longitud",                                                                        "Coordenas DMS",
+  
+  "Conocimiento", "CncTrans",       "Conocimiento sobre la transmisión del dengue",                                               "Categórica (Sí=1, No=0)",
+  "Conocimiento", "CncSint",        "Conocimiento sobre síntomas del dengue",                                                     "Categórica (Sí=1, No=0)",
+  "Conocimiento", "CncCont",        "Conocimiento sobre control de poblaciones de zancudos",                                      "Categórica (Sí=1, No=0)",
+  "Conocimiento", "FamDiag",        "Diagnóstico previo de dengue, zika o chikungunya en la familia",                             "Categórica (Sí=1, No=0)",
+  "Conocimiento", "DiagDengue",     "Diagnóstico de dengue",                                                                      "Categórica (Sí=1, No=0)",
+  "Conocimiento", "DiagZika",       "Diagnóstico de zika",                                                                        "Categórica (Sí=1, No=0)",
+  "Conocimiento", "DiagChik",       "Diagnóstico de chikungunya",                                                                 "Categórica (Sí=1, No=0)",
+  "Conocimiento", "FamHosp",        "Requerimiento de hospitalización (dengue, zika, chikungunya) en la familia",                 "Categórica (Sí=1, No=0)",
+  "Conocimiento", "HospDengue",     "Hospitalización por dengue",                                                                 "Categórica (Sí=1, No=0)",
+  "Conocimiento", "HospZika",       "Hospitalización por zika",                                                                   "Categórica (Sí=1, No=0)",
+  "Conocimiento", "HospChik",       "Hospitalización por chikungunya",                                                            "Categórica (Sí=1, No=0)",
+  "Conocimiento", "MetDiag",        "Método de diagnóstico del dengue",                                                           "Categórica (Prueba de lab=1, Sospecha clínica=2)",
+  "Conocimiento", "Caso_6m",        "Caso de dengue en los últimos 6 meses",                                                      "Categórica (Sí=1, No=0)",
+  "Conocimiento", "AtenMed",        "Atención médica por sospecha de dengue",                                                     "Categórica (Sí=1, No=0)",
+  "Conocimiento", "PruebLab",       "Prueba de laboratorio por sospecha de dengue",                                               "Categórica (Sí=1, No=0)",
+  "Conocimiento", "AutoMed",        "Automedicación por sospecha de dengue",                                                      "Categórica (Sí=1, No=0)",
+  "Conocimiento", "MedNat",         "Uso de medicina natural por sospecha de dengue",                                             "Categórica (Sí=1, No=0)",
+  "Conocimiento", "BrotVec",        "Brotes de dengue en el vecindario en los últimos 6 meses",                                   "Categórica (Sí=1, No=0, Desconoce=2)",
+  "Conocimiento", "MedVec",         "Medidas tomadas en el vecindario ante brotes de dengue",                                     "Categórica (Desconoce=1, Pasar consulta=2, Ninguna=3)",
+  
+  "Practicas",   "Mosq_uso",        "Uso de mosquiteros sobre las camas",                                                         "Categórica (Sí=1, No=0)",
+  "Practicas",   "Mosq_Insec",      "Uso de mosquiteros impregnados con insecticida",                                             "Categórica (Sí=1, No=0)",
+  "Practicas",   "Mosq_Peri",       "Período de uso de mosquiteros",                                                              "Categórica (Todo el año=1, Época de lluvia=2)",
+  "Practicas",   "MosqAguj",        "Mosquiteros poseen agujeros",                                                                "Categórica (Sí=1, No=0)",
+  "Practicas",   "MsqFrcStd",       "Frecuencia con que revisa el estado del mosquitero",                                         "Categórica (Seguido=1, Rara vez=2, Nunca=3)",
+  "Practicas",   "MosqTds",         "Uso de mosquiteros en todos los grupos de edad",                                             "Categórica (Sí=1, No=0)",
+  "Practicas",   "MFN_5",           "Número de familiares menores de 5 años",                                                      "Categórica (Sí=1, No=0)",
+  "Practicas",   "MFN5_7",          "Número de familiares entre 5 y 7 años",                                                      "Categórica (Sí=1, No=0)",
+  "Practicas",   "MFA18_40",        "Número de familiares entre 18 y 40 años",                                                     "Categórica (Sí=1, No=0)",
+  "Practicas",   "MFA_40",          "Número de familiares mayores de 40 años",                                                     "Categórica (Sí=1, No=0)",
+  "Practicas",   "Malla_Uso",       "Usa mallas en puertas y ventanas",                                                           "Categórica (Sí=1, No=0)",
+  "Practicas",   "Repel_Uso",       "Utiliza repelente contra picaduras de zancudos",                                             "Categórica (Sí=1, No=0)",
+  "Practicas",   "Charla",          "",                                                                                           "Categórica (Sí=1, No=0)",
+  "Practicas",   "Fum_Com",         "Campañas de fumigación en su comunidad en los últimos 6 meses",                              "Categórica (Sí=1, No=0)",
+  "Practicas",   "Fum_frec",        "Frecuencia de campañas de fumigación en los últimos 6 meses",                                "Categórica (1-2 veces=1, 3-4 veces=2, >4 veces=3)",
+  "Practicas",   "Ult_Vis_A",       "Última visita de autoridades de salud para fumigar su casa",                                 "Categórica (1er tri=1, 2do tri=2, 3er tri=3)",
+  "Practicas",   "Fum_Hogar",       "Permitió que su hogar sea fumigado",                                                         "Categórica (Sí=1, No=0)",
+  "Practicas",   "Fum_MotNo",       "Motivo por el que no permitió fumigación",                                                   "Categórica (No estaba=1, Alergias=2)",
+  "Practicas",   "Fum_Cree",        "Considera efectivas las fumigaciones para reducir zancudos",                                 "Categórica (Sí=1, No=0)",
+  "Practicas",   "Frec_Limp_Dep",   "Frecuencia de limpieza de depósitos de agua al mes",                                         "Categórica (1 vez=1, 2 veces=2, 3 veces=3, >4=4)",
+  "Practicas",   "Abat_Uso",        "Uso de abate en depósitos de agua",                                                          "Categórica (Sí=1, No=0)",
+  "Practicas",   "Abat_tiemp",      "Tiempo desde que se colocó abate",                                                           "Categórica (<1 mes=1, ~2 meses=2, >3 meses=3)",
+  
+  "A CONSIDERAR", "Inf_prev",       "Recibir más información sobre cómo prevenir el dengue",                                      "Categórica (Sí=1, No=0)",
+  "A CONSIDERAR", "Inf_Foll",       "Recibir información en folleto",                                                             "Categórica (Sí=1, No=0)",
+  "A CONSIDERAR", "Inf_char",       "Recibir información en charlas comunitarias",                                                "Categórica (Sí=1, No=0)",
+  "A CONSIDERAR", "Inf_tv_rad",     "Recibir información en programas de TV/radio",                                               "Categórica (Sí=1, No=0)",
+  "A CONSIDERAR", "Inf_redsoc",     "Recibir información por redes sociales",                                                     "Categórica (Sí=1, No=0)",
+  "A CONSIDERAR", "inf_otro",       "Recibir información por otros medios",                                                       "Categórica (Sí=1, No=0)",
+  "A CONSIDERAR", "Resp_Soc",       "Responsabilidad del control del dengue: la sociedad en general",                             "Categórica (Sí=1, No=0)",
+  "A CONSIDERAR", "Resp_Alc",       "Responsabilidad del control del dengue: Alcaldías",                                          "Categórica (Sí=1, No=0)",
+  "A CONSIDERAR", "Resp_MINSAL",    "Responsabilidad del control del dengue: Ministerio de Salud",                                "Categórica (Sí=1, No=0)",
+  
+  "MMB. FAM",     "`N <5`",         "Niños menores de 5 años",                                                                    "Numérico",
+  "MMB. FAM",     "N5-17",          "Niños entre 5 y 17 años",                                                                    "Numérico",
+  "MMB. FAM",     "A18_40",         "Adultos entre 18 y 40 años",                                                                 "Numérico",
+  "MMB. FAM",     "`A >40`",        "Adultos mayores de cuarenta",                                                                "Numérico",
+  "MMB. FAM",     "Embar",          "Mujeres embarazadas",                                                                        "Numérico",
+  
+  "ESTRUCTURA",   "ParedTipo",      "Tipo de paredes de la vivienda",                                                             "Categórica (Adobe=1, Bloque=2, etc.)",
+  "ESTRUCTURA",   "RepelloTipo",    "Tipo de repello de la vivienda",                                                             "Categórica (Cemento=1, Lodo=2, Parcial=3, Sin=4)",
+  "ESTRUCTURA",   "TechoTipo",      "Tipo de techo de la vivienda",                                                               "Categórica (Palma=1, Paja=2, Lámina=3, etc.)",
+  "ESTRUCTURA",   "Gote",           "Presencia de goteras en el techo",                                                           "Categórica (Sí=1, No=0)",
+  "ESTRUCTURA",   "SueloTipo",      "Tipo de piso de la vivienda",                                                                "Categórica (Tierra=1, Cemento=2, Ladrillo=3, Otro=4)",
+  "ESTRUCTURA",   "EstrucAdic",     "Estructuras adicionales en la vivienda",                                                     "Categórica (Gallinero=1, Porqueriza=2, etc.)",
+  
+  "DISPOCISION AGUA", "AguaTipo",   "Tipo de agua utilizada en casa",                                                             "Categórica (ANDA=1, Pozo=2, Río=3, etc.)",
+  "DISPOCISION AGUA", "FrecRecAg",  "Frecuencia de recolección de agua",                                                          "Categórica (1 vez=1, 2 veces=2, 3 o más=3)",
+  "DISPOCISION AGUA", "AlmBarril",  "Almacena en barriles",                                                                       "Categórica (Sí=1, No=0)",
+  "DISPOCISION AGUA", "AlmCub",     "Almacena en cubetas",                                                                        "Categórica (Sí=1, No=0)",
+  "DISPOCISION AGUA", "AlmPila",    "Almacena en pila",                                                                           "Categórica (Sí=1, No=0)",
+  "DISPOCISION AGUA", "AlmOtro",    "Almacena en otro recipiente",                                                                "Categórica (Sí=1, No=0)",
+  "DISPOCISION AGUA", "AlmNing",    "No almacena agua",                                                                           "Categórica (Sí=1, No=0)",
+  "DISPOCISION AGUA", "CubTipo",    "Tipo de cubierta en los recipientes de agua",                                                "Categórica (Ninguno=1, Tapaderas=2, Plástico=3, etc.)",
+  
+  "RECOLECTA",     "ZancViv",       "Presencia de zancudos adultos en la vivienda",                                               "Categórica (Sí=1, No=0)",
+  "RECOLECTA",     "LarvViv",       "Presencia de larvas en la vivienda",                                                         "Categórica (Sí=1, No=0)",
+  "RECOLECTA",     "RecBrl",        "Recolecta larvas en barril",                                                                 "Categórica (Sí=1, No=0)",
+  "RECOLECTA",     "RecCub",        "Recolecta larvas en cubetas",                                                                "Categórica (Sí=1, No=0)",
+  "RECOLECTA",     "RecPila",       "Recolecta larvas en pila",                                                                   "Categórica (Sí=1, No=0)",
+  "RECOLECTA",     "RecMct",        "Recolecta larvas en macetas",                                                                "Categórica (Sí=1, No=0)",
+  "RECOLECTA",     "RecLlnts",      "Recolecta larvas en llantas",                                                                "Categórica (Sí=1, No=0)",
+  "RECOLECTA",     "RecOtros",      "Recolecta larvas en otros",                                                                  "Categórica (Sí=1, No=0)",
+  "RECOLECTA",     "RecNing",       "No se recolectan larvas en la vivienda",                                                     "Categórica (Sí=1, No=0)",
+  "RECOLECTA",     "H_Aeg",         "Presencia de hembra Aedes aegypti en la vivienda",                                           "Categórica (Sí=1, No=0)",
+  "RECOLECTA",     "M_Aeg",         "Presencia de macho albopictus en la vivienda",                                               "Categórica (Sí=1, No=0)",
+  "RECOLECTA",     "H_albo",        "Presencia de hembra Aedes Albopictus",                                                       "Categórica (Sí=1, No=0)",
+  "RECOLECTA",     "M_albo",        "Presencia de macho albopictus",                                                              "Categórica (Sí=1, No=0)",
+  
+  "VDEN",          "DENV_1",        "Presencia de DENV1",                                                                        "Categórica (Sí=1, No=0)",
+  "VDEN",          "DENV_2",        "Presencia de DENV2",                                                                        "Categórica (Sí=1, No=0)",
+  "VDEN",          "DENV_3",        "Presencia de DENV3",                                                                        "Categórica (Sí=1, No=0)",
+  "VDEN",          "DENV_4",        "Presencia de DENV4",                                                                        "Categórica (Sí=1, No=0)"
+)
+
+# Mostramos la tabla en el documento
+kable(
+  df, 
+  caption = "Diccionario de Variables", 
+  align = "l"
+)
+
+```

@@ -55,7 +55,7 @@ graficosGeo <- function(input, output, session, datos_relevantes) {
       ns("municipios_filtro"),
       "Seleccione Municipios:",
       choices = municipios,
-      selected = municipios  # Seleccionar todos por defecto
+      selected = municipios[1]  # Seleccionar todos por defecto
     )
   })
   

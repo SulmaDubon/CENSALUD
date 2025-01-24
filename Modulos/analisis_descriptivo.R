@@ -22,8 +22,8 @@ analisisDescriptivoUI <- function(id) {
                choices = c("Barras Agrupadas", "Barras Apiladas"),
                selected = "Barras Agrupadas"
              ),
-             actionButton(ns("guardar_tabla"), "Guardar Tabla (Excel)"),
-             actionButton(ns("guardar_grafico"), "Guardar Gráfico (PNG)")
+             downloadButton(ns("guardar_tabla"), "Guardar Tabla (Excel)"),
+             downloadButton(ns("guardar_grafico"), "Guardar Gráfico (PNG)")
       ),
       column(8,
              uiOutput(ns("checkbox_variables"))
@@ -89,7 +89,7 @@ analisisDescriptivo <- function(input, output, session, datos_completos, carpeta
     
     # Seleccionar variables y mantener Municipio
     datos_long <- datos %>%
-      select(all_of(variables), Municipio) %>% 
+      dplyr::select(any_of(variables), Municipio) %>%
       pivot_longer(cols = all_of(variables), names_to = "Variable", values_to = "Respuesta")
     
     # Aplicar el filtro de NA por variable
@@ -140,7 +140,7 @@ analisisDescriptivo <- function(input, output, session, datos_completos, carpeta
   })
   
   # Descargar la tabla en formato Excel
-  output$descargar_tabla <- downloadHandler(
+  output$guardar_tabla <- downloadHandler(
     filename = function() {
       paste("tabla_resumen_", Sys.Date(), ".xlsx", sep = "")
     },
@@ -240,7 +240,7 @@ analisisDescriptivo <- function(input, output, session, datos_completos, carpeta
   })
   
   # Descargar el gráfico en formato PNG
-  output$descargar_grafico <- downloadHandler(
+  output$guardar_grafico <- downloadHandler(
     filename = function() {
       paste("grafico_resumen_", Sys.Date(), ".png", sep = "")
     },

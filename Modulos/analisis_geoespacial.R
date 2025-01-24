@@ -55,7 +55,7 @@ analisisGeoespacial <- function(input, output, session, datos_relevantes) {
       session,
       "municipios_filtro",
       choices = municipios,
-      selected = municipios
+      selected = municipios[1]
     )
   })
   
