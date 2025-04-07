@@ -35,10 +35,14 @@ analisisGeoespacial <- function(input, output, session, datos_relevantes) {
     ZancViv = "Zancudos observados en la vivienda",
     LarvViv = "Larvas observadas en la vivienda",
     fam_entrev = "Familias entrevistadas",
-    DENV_1 = "Presencia de DENV1", 
-    DENV_2 = "Presencia de DENV2",
-    DENV_3 = "Presencia de DENV3",
-    DENV_4 = "Presencia de DENV4"
+    Ae_ae_VDEN1 = "VDEN1 en muestra de Ae. aegypti",
+    Ae_ae_VDEN2 = "VDEN2 en muestra de Ae. aegypti",
+    Ae_ae_VDEN3 = "VDEN3 en muestra de Ae. aegypti",
+    Ae_ae_VDEN4 = "VDEN4 en muestra de Ae. aegypti",
+    Ae_alb_VDEN1 = "VDEN1 en muestra de Ae. albopictus",
+    Ae_alb_VDEN2 = "VDEN2 en muestra de Ae. albopictus",
+    Ae_alb_VDEN3 = "VDEN3 en muestra de Ae. albopictus",
+    Ae_alb_VDEN4 = "VDEN4 en muestra de Ae. albopictus"
   )
   
   # Actualizar selectores dinámicos

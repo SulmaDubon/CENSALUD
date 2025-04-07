@@ -42,7 +42,8 @@ crear_datos_relevantes <- function(datos) {
   columnas_requeridas <- c("ID", "Municipio", "Coor_Lat", "Coor_Long", 
                            "FamDiag", "FamHosp", "Caso_6m", "ZancViv", 
                            "LarvViv", "H_Aeg", "M_Aeg", "H_albo", 
-                           "M_albo", "DENV_1", "DENV_2", "DENV_3", "DENV_4")
+                           "M_albo", "Ae_ae_VDEN1", "Ae_ae_VDEN2", "Ae_ae_VDEN3", "Ae_ae_VDEN4", "Ae_alb_VDEN1", "Ae_alb_VDEN2",
+                           "Ae_alb_VDEN3", "Ae_alb_VDEN4")
   
   # Verifica si faltan columnas
   print("Columnas antes de limpiar:")

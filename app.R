@@ -20,11 +20,14 @@ categorias <- list(
                  "Resp_Soc", "Resp_Alc", "Resp_MINSAL"),
   Familia = c("N_5", "N5_17", "A18_40", "A_40", "Embar"),
   Estructura = c("ParedTipo", "RepelloTipo", "TechoTipo", "Gote", "SueloTipo", "EstrucAdic"),
-  AguaDisposicion = c("AguaTipo", "FrecRecAg", "AlmBarril", "AlmCub", "AlmPila", "AlmOtro", 
-                      "AlmNing", "CubTipo"),
+  AguaDisposicion = c("ANDA_UtilAgu", "Pozo_UtilAgu", "Rio_UtilAgu", 
+                      "Nac_UtilAgu", "Pip_UtilAgu", "Otr_UtilAgu", "FrecRecAg", "AlmBarril", "AlmCub", "AlmPila", "AlmOtro", 
+                      "AlmNing", "CubTap", "CubPlast", "CubLam", "CubOtr",
+                      "CubNing"),
   Recolecta = c("ZancViv", "LarvViv", "RecBrl", "RecCub", "RecPila", "RecMct", "RecLlnts", 
                 "RecOtros", "RecNing", "H_Aeg", "M_Aeg", "H_albo", "M_albo"),
-  VDEN = c("DENV_1", "DENV_2", "DENV_3", "DENV_4")
+  VDEN = c("Ae_ae_VDEN1", "Ae_ae_VDEN2", "Ae_ae_VDEN3", "Ae_ae_VDEN4", "Ae_alb_VDEN1", "Ae_alb_VDEN2",
+           "Ae_alb_VDEN3", "Ae_alb_VDEN4")
 )
 
 ui <- fluidPage(
@@ -36,7 +39,7 @@ ui <- fluidPage(
   tags$div(
     class = "barra-superior",
     tags$img(src = "Barra.png", alt = "Logo"), # Logo reducido
-    tags$h1("Monitoreo del virus del Dengue en San Salvador") # Título al lado del logo
+    tags$h1("Monitoreo del virus del Dengue en El Salvador") # Título al lado del logo
   ),
   
   # Contenido y navegación
@@ -119,51 +122,48 @@ ui <- fluidPage(
 server <- function(input, output, session) {
   
   datos_completos <- reactiveVal()
-  carpeta_informe <- reactiveVal()  
   
   # Llamadas a los módulos
   callModule(
     cargaDatos,
     "carga_datos_ui",
     datos_completos = datos_completos,
-    carpeta_informe = carpeta_informe,
     categorias = categorias
   )
   
-  callModule(
-    visualizacionGeoespacial,
-    "visualizacion_geoespacial_ui",
-    datos_completos = datos_completos,
-    carpeta_informe = carpeta_informe
-  )
-  
-  callModule(
-    analisisDescriptivo,
-    "analisis_descriptivo_ui",
-    datos_completos = datos_completos,
-    categorias = categorias
-  )
-  
-  callModule(
-    inferenciaEstadistica,
-    "inferencia_estadistica_ui",
-    datos_completos = datos_completos,
-    categorias = categorias
-  )
-  
-  callModule(
-    mod_tendencias_server,
-    "tendencias_ui",
-    datos_completos = datos_completos,
+  #callModule(
+   # visualizacionGeoespacial,
+    #"visualizacion_geoespacial_ui",
+    #datos_completos = datos_completos
     
-  )
+  #)
   
-  callModule(
-    modelado,
-    "modelado_ui", 
-    datos = datos_completos,
-    categorias = categorias  
-  )
+  #callModule(
+   # analisisDescriptivo,
+    #"analisis_descriptivo_ui",
+    #datos_completos = datos_completos,
+    #categorias = categorias
+  #)
+  
+  #callModule(
+   # inferenciaEstadistica,
+    #"inferencia_estadistica_ui",
+    #datos_completos = datos_completos,
+    #categorias = categorias
+  #)
+  
+  #callModule(
+   # mod_tendencias_server,
+    #"tendencias_ui",
+    #datos_completos = datos_completos
+  #)
+  
+  #callModule(
+   # modelado,
+    #"modelado_ui", 
+    #datos = datos_completos,
+    #categorias = categorias  
+  #)
   
   # Acción para abrir el PDF del manual de usuario en un modal
   observeEvent(input$manual, {

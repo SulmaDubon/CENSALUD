@@ -24,11 +24,7 @@ diccionario_respuestas <- list(
   SueloTipo = c("Tierra" = 1, "Cemento" = 2, "Ladrillo" = 3, "Otro" = 4),
   EstrucAdic = c("Gallinero" = 1, "Porqueriza" = 2, "Cocina de leña/horno" = 3, 
                  "Conejera" = 4, "Trapiche" = 5, "Otro" = 6, "Ninguno" = 7),
-  AguaTipo = c("ANDA" = 1, "De pozo" = 2, "Río" = 3, "Nacimiento" = 4, 
-               "Pipa de agua" = 5, "Otro" = 6),
-  FrecRecAg = c("1 vez" = 1, "2 veces" = 2, "3 o más veces" = 3),
-  CubTipo = c("Ninguno" = 1, "Tapaderas" = 2, "Pedazos de plástico" = 3, 
-              "Láminas" = 4, "Otro" = 5)
+  FrecRecAg = c("1 vez" = 1, "2 veces" = 2, "3 o más veces" = 3)
 )
 
 
@@ -41,7 +37,9 @@ variables_si_no <- c(
   "Resp_Soc", "Resp_Alc", "Resp_MINSAL", "Gote", "AlmBarril", "AlmCub", "AlmPila",
   "AlmOtro", "AlmNing", "ZancViv", "LarvViv", "RecBrl", "RecCub", "RecPila", "RecMct",
   "RecLlnts", "RecOtros", "RecNing", "H_Aeg", "M_Aeg", "H_albo", "M_albo", "Abat_Uso", 
-  "DENV_1", "DENV_2", "DENV_3", "DENV_4"
+"DENV_1", "DENV_2", "DENV_3", "DENV_4", "ANDA_UtilAgu", "Pozo_UtilAgu", "Rio_UtilAgu", 
+"Nac_UtilAgu", "Pip_UtilAgu", "Otr_UtilAgu", "CubTap", "CubPlast", "CubLam", "CubOtr",
+"CubNing"
 )
 
 # Añadir al diccionario principal
